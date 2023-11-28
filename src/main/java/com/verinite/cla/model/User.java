@@ -1,8 +1,10 @@
 package com.verinite.cla.model;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.verinite.cla.util.Role;
@@ -30,18 +32,18 @@ public class User implements UserDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String username;
-	
 	@Column(unique = true)
 	private String email;
-	
+
+	private String name;
+
 	private String password;
 
 	private byte[] photo;
 
 	@Enumerated(EnumType.STRING)
-    private Role role;
-	
+	private Role role;
+
 	public Long getId() {
 		return id;
 	}
@@ -58,10 +60,6 @@ public class User implements UserDetails {
 		this.email = email;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
 	public byte[] getPhoto() {
 		return photo;
 	}
@@ -69,51 +67,39 @@ public class User implements UserDetails {
 	public void setPhoto(byte[] photo) {
 		this.photo = photo;
 	}
-	
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
+		return List.of(new SimpleGrantedAuthority(role.name()));
 	}
 
 	@Override
 	public String getPassword() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getUsername() {
-		// TODO Auto-generated method stub
-		return null;
+		return password;
 	}
 
 	@Override
 	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public Role getRole() {
@@ -122,5 +108,18 @@ public class User implements UserDetails {
 
 	public void setRole(Role role) {
 		this.role = role;
+	}
+
+	@Override
+	public String getUsername() {
+		return email;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }
