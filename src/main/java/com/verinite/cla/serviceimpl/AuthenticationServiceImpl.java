@@ -15,7 +15,6 @@ import com.verinite.cla.model.User;
 import com.verinite.cla.repository.UserRepository;
 import com.verinite.cla.service.AuthenticationService;
 import com.verinite.cla.service.JwtService;
-import com.verinite.cla.util.Role;
 
 import lombok.RequiredArgsConstructor;
 
@@ -41,7 +40,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		user.setName(request.getName());
 		user.setEmail(request.getEmail());
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
-		user.setRole(Role.USER);
+		user.setRoles(request.getRoles());
 		userRepository.save(user);
 		jwtService.generateToken(user);
 		return new StatusResponse("Sucess", HttpStatus.CREATED.value(), "User Registered Successfully");

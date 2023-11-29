@@ -26,7 +26,7 @@ public class JwtServiceImpl implements JwtService {
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
     }
-
+    
     @Override
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
@@ -44,7 +44,9 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
+    	extraClaims.put("email", userDetails.getUsername());
+        return Jwts.builder().setClaims(extraClaims)
+//        		.setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
