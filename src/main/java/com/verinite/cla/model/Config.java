@@ -16,6 +16,7 @@ public class Config {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(unique = true)
 	private String keyName;
 
 	private String data;

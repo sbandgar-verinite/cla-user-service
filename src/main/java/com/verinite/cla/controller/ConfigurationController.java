@@ -16,7 +16,7 @@ import com.verinite.cla.service.ConfigService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/auth/config")
+@RequestMapping("/api/v1/config")
 @RequiredArgsConstructor
 public class ConfigurationController {
 
