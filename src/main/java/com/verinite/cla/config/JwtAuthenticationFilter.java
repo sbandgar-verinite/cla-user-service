@@ -29,6 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private JwtService jwtService;
 	@Autowired
 	private UserService userService;
+
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
 			@NonNull FilterChain filterChain) throws ServletException, IOException {
@@ -51,6 +52,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				context.setAuthentication(authToken);
 				SecurityContextHolder.setContext(context);
 			}
+
+			jwtService.checkRoleBasedAccess(userEmail, request.getRequestURI());
 		}
 		filterChain.doFilter(request, response);
 	}

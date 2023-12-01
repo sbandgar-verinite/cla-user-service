@@ -16,23 +16,20 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "role")
-public class Role {
+@Table(name = "privilege")
+public class Privilege {
 
 	@Id
-	@Column(name = "role_id")
+	@Column(name = "privilege_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
 	@Column(unique = true)
 	private String name;
 
-	@ManyToMany(mappedBy = "roles")
-	private Set<User> users = new HashSet<>();
-
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinTable(name = "roles_privileges", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "privilege_id"))
-	private Set<Privilege> privileges = new HashSet<>();
+	@JoinTable(name = "privileges_endpoints", joinColumns = @JoinColumn(name = "privilege_id"), inverseJoinColumns = @JoinColumn(name = "endpoint_id"))
+	private Set<Endpoint> endpoints = new HashSet<>();
 
 	public String getName() {
 		return name;
@@ -46,23 +43,15 @@ public class Role {
 		return id;
 	}
 
-	public Set<Privilege> getPrivileges() {
-		return privileges;
-	}
-
-	public void setPrivileges(Set<Privilege> privileges) {
-		this.privileges = privileges;
-	}
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	public Set<User> getUsers() {
-		return users;
+	public Set<Endpoint> getEndpoints() {
+		return endpoints;
 	}
 
-	public void setUsers(Set<User> users) {
-		this.users = users;
+	public void setEndpoints(Set<Endpoint> endpoints) {
+		this.endpoints = endpoints;
 	}
 }

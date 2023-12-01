@@ -1,0 +1,24 @@
+version: '3.3'
+volumes:
+  db-data:
+
+services:
+  db:
+    image: mysql:8.1.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cla
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+      MYSQLDATA: /tmp/db/data
+    volumes:
+      - db-data:/tmp/db/data
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: "512m"

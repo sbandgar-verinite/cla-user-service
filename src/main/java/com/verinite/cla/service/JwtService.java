@@ -1,5 +1,6 @@
 package com.verinite.cla.service;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface JwtService {
@@ -10,4 +11,6 @@ public interface JwtService {
 	boolean isTokenValid(String token, UserDetails userDetails);
 
 	String extractEmail(String token);
+
+	boolean checkRoleBasedAccess(String userEmail, String requestUri) throws BadRequestException;
 }

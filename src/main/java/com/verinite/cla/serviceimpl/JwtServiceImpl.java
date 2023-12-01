@@ -1,15 +1,28 @@
 package com.verinite.cla.serviceimpl;
 
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
+import org.apache.coyote.BadRequestException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import com.verinite.cla.model.Endpoint;
+import com.verinite.cla.model.Privilege;
+import com.verinite.cla.model.Role;
+import com.verinite.cla.model.User;
+import com.verinite.cla.repository.UserRepository;
 import com.verinite.cla.service.JwtService;
 
 import io.jsonwebtoken.Claims;
@@ -20,6 +33,10 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtServiceImpl implements JwtService {
+
+	@Autowired
+	private UserRepository userRepo;
+
 	@Value("${token.signing.key}")
 	private String jwtSigningKey;
 
@@ -74,5 +91,39 @@ public class JwtServiceImpl implements JwtService {
 	private Key getSigningKey() {
 		byte[] keyBytes = Decoders.BASE64.decode(jwtSigningKey);
 		return Keys.hmacShaKeyFor(keyBytes);
+	}
+
+	@Override
+	public boolean checkRoleBasedAccess(String userEmail, String requestUri) throws BadRequestException {
+		Optional<User> userData = userRepo.findByEmail(userEmail);
+		if (userData.isEmpty()) {
+			throw new BadRequestException("Login failed");
+		}
+
+		if (CollectionUtils.isEmpty(userData.get().getRoles())) {
+			throw new BadRequestException("Roles Not Found");
+		}
+
+		if (CollectionUtils.isEmpty(userData.get().getRoles())) {
+			throw new BadRequestException("Roles Not Found");
+		}
+
+		Set<Role> role = userData.get().getRoles();
+		Optional<Role> rolePrivilege = role.stream().findFirst();
+
+		if (rolePrivilege.isPresent() && !CollectionUtils.isEmpty(rolePrivilege.get().getPrivileges())) {
+			List<Endpoint> endpointList = new ArrayList<>();
+			for (Privilege privilege : rolePrivilege.get().getPrivileges()) {
+				endpointList.addAll(privilege.getEndpoints());
+			}
+
+			boolean isFound = endpointList.stream().anyMatch(x -> x.getEndpointUri().equalsIgnoreCase(requestUri));
+			if (!isFound) {
+				throw new AuthorizationServiceException("Unauthorized. You don't have access");
+			}
+		}
+
+		return true;
+
 	}
 }
