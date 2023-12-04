@@ -10,14 +10,15 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.CollectionUtils;
 
+import com.verinite.cla.controlleradvice.BadRequestException;
+import com.verinite.cla.controlleradvice.ForbiddenException;
 import com.verinite.cla.model.Endpoint;
 import com.verinite.cla.model.Privilege;
 import com.verinite.cla.model.Role;
@@ -94,7 +95,8 @@ public class JwtServiceImpl implements JwtService {
 	}
 
 	@Override
-	public boolean checkRoleBasedAccess(String userEmail, String requestUri) throws BadRequestException {
+	public void checkRoleBasedAccess(String userEmail, String requestUri, String httpMethod)
+			throws BadRequestException {
 		Optional<User> userData = userRepo.findByEmail(userEmail);
 		if (userData.isEmpty()) {
 			throw new BadRequestException("Login failed");
@@ -111,19 +113,23 @@ public class JwtServiceImpl implements JwtService {
 		Set<Role> role = userData.get().getRoles();
 		Optional<Role> rolePrivilege = role.stream().findFirst();
 
+		Boolean isFound = Boolean.FALSE;
 		if (rolePrivilege.isPresent() && !CollectionUtils.isEmpty(rolePrivilege.get().getPrivileges())) {
 			List<Endpoint> endpointList = new ArrayList<>();
 			for (Privilege privilege : rolePrivilege.get().getPrivileges()) {
 				endpointList.addAll(privilege.getEndpoints());
 			}
-
-			boolean isFound = endpointList.stream().anyMatch(x -> x.getEndpointUri().equalsIgnoreCase(requestUri));
-			if (!isFound) {
-				throw new AuthorizationServiceException("Unauthorized. You don't have access");
-			}
+			
+//			isFound = Arrays.stream(endpointList.toArray())
+			isFound = endpointList.stream().anyMatch(e -> new AntPathMatcher().match(e.getEndpointUri(), requestUri));
+//					.anyMatch(e -> new AntPathMatcher().match(e.getEndpointUri(), requestUri));
+			
+//			isFound = endpointList.stream().anyMatch(
+//					x -> requestUri.matches(x.getEndpointUri()) && x.getMethod().equalsIgnoreCase(httpMethod));
 		}
 
-		return true;
-
+		if (Boolean.FALSE.equals(isFound)) {
+			throw new ForbiddenException("Access Denied. You don't have access to this resource");
+		}
 	}
 }

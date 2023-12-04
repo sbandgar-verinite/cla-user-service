@@ -52,8 +52,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				context.setAuthentication(authToken);
 				SecurityContextHolder.setContext(context);
 			}
-
-			jwtService.checkRoleBasedAccess(userEmail, request.getRequestURI());
+			
+			jwtService.checkRoleBasedAccess(userEmail, request.getRequestURI(), request.getMethod());
 		}
 		filterChain.doFilter(request, response);
 	}

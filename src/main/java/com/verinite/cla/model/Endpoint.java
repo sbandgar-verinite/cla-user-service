@@ -18,12 +18,13 @@ public class Endpoint {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@Column(unique = true)
 	private String name;
 
 	@JsonProperty("endpoint_uri")
-	@Column(unique = true)
 	private String endpointUri;
+
+	@JsonProperty("method")
+	private String method;
 
 	private String description;
 
@@ -58,4 +59,13 @@ public class Endpoint {
 	public void setEndpointUri(String endpointUri) {
 		this.endpointUri = endpointUri;
 	}
+
+	public String getMethod() {
+		return method;
+	}
+
+	public void setMethod(String method) {
+		this.method = method;
+	}
+
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.verinite.cla.dto.RoleDto;
 import com.verinite.cla.dto.StatusResponse;
 import com.verinite.cla.service.ConfigService;
 
@@ -32,5 +33,10 @@ public class ConfigurationController {
 	@GetMapping("/{key}")
 	public ResponseEntity<Object> getConfiguration(@PathVariable String key) throws BadRequestException {
 		return ResponseEntity.ok(configService.getConfiguration(key));
+	}
+	
+	@PostMapping
+	public ResponseEntity<String> mapRolesToPrivilege(@RequestBody RoleDto role) throws BadRequestException {
+		return ResponseEntity.ok(configService.mapRolesToPrivilege(role));
 	}
 }

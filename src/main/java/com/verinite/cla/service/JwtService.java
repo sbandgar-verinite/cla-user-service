@@ -12,5 +12,5 @@ public interface JwtService {
 
 	String extractEmail(String token);
 
-	boolean checkRoleBasedAccess(String userEmail, String requestUri) throws BadRequestException;
+	void checkRoleBasedAccess(String userEmail, String requestUri, String method) throws BadRequestException;
 }
