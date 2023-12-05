@@ -1,5 +1,6 @@
 package com.verinite.cla.serviceimpl;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -13,17 +14,22 @@ import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.verinite.cla.controlleradvice.BadRequestException;
+import com.verinite.cla.dto.EndpointDto;
 import com.verinite.cla.dto.PrivilegeDto;
 import com.verinite.cla.dto.RoleDto;
 import com.verinite.cla.dto.StatusResponse;
 import com.verinite.cla.model.Config;
+import com.verinite.cla.model.Endpoint;
 import com.verinite.cla.model.Privilege;
 import com.verinite.cla.model.Role;
 import com.verinite.cla.repository.ConfigRepository;
+import com.verinite.cla.repository.EndpointRepository;
+import com.verinite.cla.repository.PrivilegeRepository;
 import com.verinite.cla.repository.RoleRepository;
 import com.verinite.cla.service.ConfigService;
 import com.verinite.cla.util.Constants;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -41,6 +47,12 @@ public class ConfigServiceImpl implements ConfigService {
 	@Autowired
 	private ObjectMapper modelMapper;
 
+	@Autowired
+	private PrivilegeRepository privilegeRepository;
+
+	@Autowired
+	private EndpointRepository endpointRepository;
+
 	@Override
 	public StatusResponse addConfiguration(String key, Object value) throws BadRequestException {
 		logger.info("[SERVICE] Request received to add configuration for key : {}", key);
@@ -51,7 +63,7 @@ public class ConfigServiceImpl implements ConfigService {
 		if (value == null) {
 			throw new BadRequestException("Please pass a valid value");
 		}
-		
+
 		Optional<Config> existingConfig = configRepo.findByKeyName(key);
 		if (existingConfig.isPresent()) {
 			throw new BadRequestException("Duplicate Key. Key already exists");
@@ -95,7 +107,7 @@ public class ConfigServiceImpl implements ConfigService {
 			throw new BadRequestException("Invalid Input for Role");
 		}
 
-		Optional<Role> existingRoleData = roleRepo.findByName(role.getName());
+		Optional<Role> existingRoleData = roleRepo.findByName(role.getName().toUpperCase());
 		if (existingRoleData.isEmpty()) {
 			throw new BadRequestException("Role doesn't exists. Please add role before mapping");
 		}
@@ -109,5 +121,118 @@ public class ConfigServiceImpl implements ConfigService {
 		}
 
 		return null;
+	}
+
+	@Override
+	public StatusResponse addRole(List<RoleDto> roleDto) {
+		logger.info("Request received to add role");
+		if (roleDto == null || roleDto.isEmpty()) {
+			throw new BadRequestException("Invalid input for role data.");
+		}
+
+		List<Role> existingRoleData = roleRepo.findAllByName(roleDto.stream().map(RoleDto::getName).toList());
+		if (!existingRoleData.isEmpty()) {
+			throw new BadRequestException("Role(s) already exists. Duplication occurred");
+		}
+
+		List<Role> newRoles = roleDto.stream().map(this::convertRoleDtoToRole).toList();
+		roleRepo.saveAll(newRoles);
+		logger.info("New Role(s) saved successfully");
+		return new StatusResponse(Constants.SUCCESS, HttpStatus.OK.value(), "New Role(s) Added Successfully");
+	}
+
+	private Role convertRoleDtoToRole(RoleDto roleDto) {
+		return modelMapper.convertValue(roleDto, Role.class);
+	}
+
+	private RoleDto convertRoleToRoleDto(Role role) {
+		RoleDto roleDto = new RoleDto();
+		roleDto.setId(role.getId());
+		roleDto.setName(role.getName());
+		return roleDto;
+	}
+
+	@Override
+	public List<RoleDto> getAllRoles() {
+		logger.info("Request to return all roles");
+		List<Role> rolesList = roleRepo.findAll();
+		return rolesList.stream().map(this::convertRoleToRoleDto).toList();
+	}
+
+	@Override
+	public StatusResponse addPrivileges(List<PrivilegeDto> privilegeDto) {
+		logger.info("Request received to add privilege");
+		if (privilegeDto == null || privilegeDto.isEmpty()) {
+			throw new BadRequestException("Invalid input for privilege data.");
+		}
+
+		List<Privilege> existingData = privilegeRepository
+				.findAllByName(privilegeDto.stream().map(PrivilegeDto::getName).toList());
+		if (!existingData.isEmpty()) {
+			throw new BadRequestException("Privilege(s) already exists. Duplication occurred");
+		}
+
+		List<Privilege> newRoles = privilegeDto.stream().map(this::convertPrivilegeDtoToPrivilege).toList();
+		privilegeRepository.saveAll(newRoles);
+		logger.info("New Privilege(s) saved successfully");
+		return new StatusResponse(Constants.SUCCESS, HttpStatus.OK.value(), "New Privilege(s) Added Successfully");
+	}
+
+	private Privilege convertPrivilegeDtoToPrivilege(PrivilegeDto privilegeDto) {
+		return modelMapper.convertValue(privilegeDto, Privilege.class);
+	}
+
+	private PrivilegeDto convertPrivilegeToPrivilegeDto(Privilege privilege) {
+		PrivilegeDto privilegeDto = new PrivilegeDto();
+		privilegeDto.setId(privilege.getId());
+		privilegeDto.setName(privilege.getName());
+		return privilegeDto;
+	}
+
+	@Override
+	public List<PrivilegeDto> getAllPrivileges() {
+		logger.info("Request to return all privileges");
+		List<Privilege> privilegeList = privilegeRepository.findAll();
+		return privilegeList.stream().map(this::convertPrivilegeToPrivilegeDto).toList();
+	}
+
+	@Override
+	public StatusResponse addEndpoint(@Valid List<EndpointDto> endpointDto) {
+		logger.info("Request received to add endpoints");
+		if (endpointDto == null || endpointDto.isEmpty()) {
+			throw new BadRequestException("Invalid input for endpoint data.");
+		}
+
+		List<Endpoint> existingData = endpointRepository
+				.findAllByName(endpointDto.stream().map(EndpointDto::getName).toList());
+		if (!existingData.isEmpty()) {
+			throw new BadRequestException("Endpoint(s) already exists. Duplication occurred");
+		}
+
+		List<Endpoint> newRoles = endpointDto.stream().map(this::convertEndpointDtoToEndpoint).toList();
+		endpointRepository.saveAll(newRoles);
+		logger.info("New Endpoint(s) saved successfully");
+		return new StatusResponse(Constants.SUCCESS, HttpStatus.OK.value(), "New Endpoint(s) Added Successfully");
+	}
+
+	private Endpoint convertEndpointDtoToEndpoint(EndpointDto endpointDto) {
+		return modelMapper.convertValue(endpointDto, Endpoint.class);
+	}
+
+	private EndpointDto convertEndpointToEndpointDto(Endpoint endpoint) {
+		EndpointDto endpointDto = new EndpointDto();
+		endpointDto.setId(endpoint.getId());
+		endpointDto.setName(endpoint.getName());
+		endpointDto.setEndpointUri(endpoint.getEndpointUri());
+		endpointDto.setMethod(endpoint.getMethod());
+		endpointDto.setDescription(endpoint.getDescription());
+		return modelMapper.convertValue(endpoint, EndpointDto.class);
+	}
+
+	@Override
+	public List<EndpointDto> getAllEndpoints() {
+		logger.info("Request to return all endpoints");
+		List<Endpoint> endpointList = endpointRepository.findAll();
+		return endpointList.stream().map(this::convertEndpointToEndpointDto).toList();
 	}
 }

@@ -13,6 +13,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.verinite.cla.controlleradvice.BadRequestException;
+import com.verinite.cla.controlleradvice.ForbiddenException;
 import com.verinite.cla.service.JwtService;
 import com.verinite.cla.service.UserService;
 
@@ -38,6 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		final String userEmail;
 		if (StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader, "Bearer ")) {
 			filterChain.doFilter(request, response);
+//			throw new ForbiddenException("Invalid Bearer Token");
 			return;
 		}
 		jwt = authHeader.substring(7);
