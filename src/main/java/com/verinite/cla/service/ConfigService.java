@@ -30,4 +30,6 @@ public interface ConfigService {
 
 	List<EndpointDto> getAllEndpoints();
 
+	StatusResponse mapPrivilegeToEndpoint(List<PrivilegeDto> privilege);
+
 }

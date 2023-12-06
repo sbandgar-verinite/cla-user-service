@@ -119,13 +119,8 @@ public class JwtServiceImpl implements JwtService {
 			for (Privilege privilege : rolePrivilege.get().getPrivileges()) {
 				endpointList.addAll(privilege.getEndpoints());
 			}
-			
-//			isFound = Arrays.stream(endpointList.toArray())
+
 			isFound = endpointList.stream().anyMatch(e -> new AntPathMatcher().match(e.getEndpointUri(), requestUri));
-//					.anyMatch(e -> new AntPathMatcher().match(e.getEndpointUri(), requestUri));
-			
-//			isFound = endpointList.stream().anyMatch(
-//					x -> requestUri.matches(x.getEndpointUri()) && x.getMethod().equalsIgnoreCase(httpMethod));
 		}
 
 		if (Boolean.FALSE.equals(isFound)) {

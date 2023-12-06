@@ -19,7 +19,6 @@ import com.verinite.cla.dto.RoleDto;
 import com.verinite.cla.dto.StatusResponse;
 import com.verinite.cla.service.ConfigService;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -41,10 +40,14 @@ public class ConfigurationController {
 		return ResponseEntity.ok(configService.getConfiguration(key));
 	}
 
-	@PatchMapping("/role")
-	public ResponseEntity<StatusResponse> mapRolesToPrivilege(@RequestBody List<RoleDto> role)
-			throws BadRequestException {
+	@PatchMapping("/role/privilege")
+	public ResponseEntity<StatusResponse> mapRolesToPrivilege(@RequestBody List<RoleDto> role) {
 		return ResponseEntity.ok(configService.mapRolesToPrivilege(role));
+	}
+
+	@PatchMapping("/privilege/endpoint")
+	public ResponseEntity<StatusResponse> mapPrivilegeToEndpoint(@RequestBody List<PrivilegeDto> privilege) {
+		return ResponseEntity.ok(configService.mapPrivilegeToEndpoint(privilege));
 	}
 
 	@PostMapping("/role")

@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -108,15 +107,16 @@ public class ConfigServiceImpl implements ConfigService {
 		}
 
 		List<Role> existingRoleData = roleRepo.findAllByName(roleData.stream().map(RoleDto::getName).toList());
-		if (existingRoleData.isEmpty() || roleData.size() !=  existingRoleData.size()) {
+		if (existingRoleData.isEmpty() || roleData.size() != existingRoleData.size()) {
 			throw new BadRequestException("Role doesn't exists. Please add role before mapping");
 		}
 
 		for (RoleDto role : roleData) {
 			for (Role existingRole : existingRoleData) {
-				if (role.getName().equalsIgnoreCase(existingRole.getName())) {
-					if (!CollectionUtils.isEmpty(role.getPrivileges())) {
-						for (PrivilegeDto privilege : role.getPrivileges()) {
+				if (existingRole.getName().equalsIgnoreCase(role.getName())) {
+					List<String> existingPrivilege = existingRole.getPrivileges().stream().map(Privilege::getName).toList();
+					for (PrivilegeDto privilege : role.getPrivileges()) {
+						if (!existingPrivilege.contains(privilege.getName())) {
 							Privilege newPrivilege = modelMapper.convertValue(privilege, Privilege.class);
 							existingRole.getPrivileges().add(newPrivilege);
 						}
@@ -239,6 +239,35 @@ public class ConfigServiceImpl implements ConfigService {
 		logger.info("Request to return all endpoints");
 		List<Endpoint> endpointList = endpointRepository.findAll();
 		return endpointList.stream().map(this::convertEndpointToEndpointDto).toList();
+	}
+
+	@Override
+	public StatusResponse mapPrivilegeToEndpoint(List<PrivilegeDto> privileges) {
+		if (privileges == null || privileges.isEmpty()) {
+			throw new BadRequestException("Invalid Input for Privilege");
+		}
+
+		List<Privilege> existingData = privilegeRepository
+				.findAllByName(privileges.stream().map(PrivilegeDto::getName).toList());
+		if (existingData.isEmpty() || privileges.size() != existingData.size()) {
+			throw new BadRequestException("Role doesn't exists. Please add role before mapping");
+		}
+
+		for (PrivilegeDto privilege : privileges) {
+			for (Privilege existingPrivilege : existingData) {
+				if (privilege.getName().equalsIgnoreCase(existingPrivilege.getName())) {
+					List<String> endpoints = existingPrivilege.getEndpoints().stream().map(Endpoint::getName).toList();
+					for (EndpointDto endpoint : privilege.getEndpoints()) {
+						if (!endpoints.contains(endpoint.getName())) {
+							Endpoint newEndpoint = modelMapper.convertValue(endpoint, Endpoint.class);
+							existingPrivilege.getEndpoints().add(newEndpoint);
+						}
+					}
+				}
+			}
+		}
+		privilegeRepository.saveAll(existingData);
+		return new StatusResponse(Constants.SUCCESS, HttpStatus.OK.value(), "Privilege(s) Mapped Successfully");
 	}
 
 }
