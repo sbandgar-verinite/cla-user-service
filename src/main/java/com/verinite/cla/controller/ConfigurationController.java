@@ -6,6 +6,7 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,7 +31,7 @@ public class ConfigurationController {
 	private ConfigService configService;
 
 	@PostMapping("/{key}")
-	public ResponseEntity<StatusResponse> addConfiguration(@PathVariable String key, @RequestBody @Valid Object value)
+	public ResponseEntity<StatusResponse> addConfiguration(@PathVariable String key, @RequestBody Object value)
 			throws BadRequestException {
 		return ResponseEntity.ok(configService.addConfiguration(key, value));
 	}
@@ -40,8 +41,9 @@ public class ConfigurationController {
 		return ResponseEntity.ok(configService.getConfiguration(key));
 	}
 
-	@PostMapping
-	public ResponseEntity<String> mapRolesToPrivilege(@RequestBody @Valid RoleDto role) throws BadRequestException {
+	@PatchMapping("/role")
+	public ResponseEntity<StatusResponse> mapRolesToPrivilege(@RequestBody List<RoleDto> role)
+			throws BadRequestException {
 		return ResponseEntity.ok(configService.mapRolesToPrivilege(role));
 	}
 
@@ -56,7 +58,7 @@ public class ConfigurationController {
 	}
 
 	@PostMapping("/privilege")
-	public ResponseEntity<Object> addPrivileges(@RequestBody @Valid List<PrivilegeDto> privilegeDto) {
+	public ResponseEntity<Object> addPrivileges(@RequestBody List<PrivilegeDto> privilegeDto) {
 		return ResponseEntity.ok(configService.addPrivileges(privilegeDto));
 	}
 
@@ -66,7 +68,7 @@ public class ConfigurationController {
 	}
 
 	@PostMapping("/endpoint")
-	public ResponseEntity<Object> addEndpoint(@RequestBody @Valid List<EndpointDto> endpointDto) {
+	public ResponseEntity<Object> addEndpoint(@RequestBody List<EndpointDto> endpointDto) {
 		return ResponseEntity.ok(configService.addEndpoint(endpointDto));
 	}
 

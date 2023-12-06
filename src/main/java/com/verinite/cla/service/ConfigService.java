@@ -2,8 +2,7 @@ package com.verinite.cla.service;
 
 import java.util.List;
 
-import org.apache.coyote.BadRequestException;
-
+import com.verinite.cla.controlleradvice.BadRequestException;
 import com.verinite.cla.dto.EndpointDto;
 import com.verinite.cla.dto.PrivilegeDto;
 import com.verinite.cla.dto.RoleDto;
@@ -17,7 +16,7 @@ public interface ConfigService {
 
 	Object getConfiguration(String key) throws BadRequestException;
 
-	String mapRolesToPrivilege(RoleDto role) throws BadRequestException;
+	StatusResponse mapRolesToPrivilege(@Valid List<RoleDto> role) throws BadRequestException;
 
 	StatusResponse addRole(@Valid List<RoleDto> roleDto);
 
@@ -30,4 +29,5 @@ public interface ConfigService {
 	StatusResponse addEndpoint(@Valid List<EndpointDto> endpointDto);
 
 	List<EndpointDto> getAllEndpoints();
+
 }

@@ -15,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.verinite.cla.controlleradvice.BadRequestException;
 import com.verinite.cla.controlleradvice.ForbiddenException;
+import com.verinite.cla.controlleradvice.UnAuthorizedException;
 import com.verinite.cla.service.JwtService;
 import com.verinite.cla.service.UserService;
 
@@ -54,6 +55,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				context.setAuthentication(authToken);
 				SecurityContextHolder.setContext(context);
+			}
+			else {
+				throw new UnAuthorizedException("Authentication Failed");
 			}
 			
 			jwtService.checkRoleBasedAccess(userEmail, request.getRequestURI(), request.getMethod());

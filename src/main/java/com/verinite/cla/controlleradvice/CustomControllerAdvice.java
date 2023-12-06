@@ -27,5 +27,14 @@ public class CustomControllerAdvice extends ResponseEntityExceptionHandler {
 		error.setStatus("Authorisation Failed");
 		return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
 	}
+	
+	@ExceptionHandler(UnAuthorizedException.class)
+	public ResponseEntity<Object> handleUnAuthorizedException(UnAuthorizedException ex, WebRequest request) {
+		ErrorResponse error = new ErrorResponse();
+		error.setCode(HttpStatus.UNAUTHORIZED.value());
+		error.setMessage(ex.getValidationErrors());
+		error.setStatus("Authentication Failed");
+		return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+	}
 
 }

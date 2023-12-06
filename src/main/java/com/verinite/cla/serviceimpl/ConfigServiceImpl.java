@@ -102,25 +102,30 @@ public class ConfigServiceImpl implements ConfigService {
 	}
 
 	@Override
-	public String mapRolesToPrivilege(RoleDto role) throws BadRequestException {
-		if (role == null || role.getName() == null) {
+	public StatusResponse mapRolesToPrivilege(List<RoleDto> roleData) throws BadRequestException {
+		if (roleData == null || roleData.isEmpty()) {
 			throw new BadRequestException("Invalid Input for Role");
 		}
 
-		Optional<Role> existingRoleData = roleRepo.findByName(role.getName().toUpperCase());
-		if (existingRoleData.isEmpty()) {
+		List<Role> existingRoleData = roleRepo.findAllByName(roleData.stream().map(RoleDto::getName).toList());
+		if (existingRoleData.isEmpty() || roleData.size() !=  existingRoleData.size()) {
 			throw new BadRequestException("Role doesn't exists. Please add role before mapping");
 		}
 
-		if (!CollectionUtils.isEmpty(role.getPrivileges())) {
-			for (PrivilegeDto privilege : role.getPrivileges()) {
-				Privilege newPrivilege = modelMapper.convertValue(privilege, Privilege.class);
-				existingRoleData.get().getPrivileges().add(newPrivilege);
+		for (RoleDto role : roleData) {
+			for (Role existingRole : existingRoleData) {
+				if (role.getName().equalsIgnoreCase(existingRole.getName())) {
+					if (!CollectionUtils.isEmpty(role.getPrivileges())) {
+						for (PrivilegeDto privilege : role.getPrivileges()) {
+							Privilege newPrivilege = modelMapper.convertValue(privilege, Privilege.class);
+							existingRole.getPrivileges().add(newPrivilege);
+						}
+					}
+				}
 			}
-			roleRepo.save(existingRoleData.get());
 		}
-
-		return null;
+		roleRepo.saveAll(existingRoleData);
+		return new StatusResponse(Constants.SUCCESS, HttpStatus.OK.value(), "Role(s) Mapped Successfully");
 	}
 
 	@Override
@@ -235,4 +240,5 @@ public class ConfigServiceImpl implements ConfigService {
 		List<Endpoint> endpointList = endpointRepository.findAll();
 		return endpointList.stream().map(this::convertEndpointToEndpointDto).toList();
 	}
+
 }

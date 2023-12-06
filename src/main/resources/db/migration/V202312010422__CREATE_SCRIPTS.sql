@@ -75,13 +75,15 @@ INSERT INTO `roles_privileges` (`privilege_id`, `role_id`) VALUES (3, 1);
 
 INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (1, "SIGN-UP", "/api/v1/auth/signup", "SIGN_UP", "POST");
 INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (2, "SIGN-IN", "/api/v1/auth/signin", "SIGN_IN", "POST");
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (3, "CONFIG", "/api/v1/config/", "CONFIG", "POST");
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (4, "CONFIG", "/api/v1/config/", "CONFIG", "GET");
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (5, "CONFIG", "/api/v1/config", "CONFIG", "POST");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (3, "CONFIG", "/api/v1/config/**", "CONFIG", "POST");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (4, "CONFIG", "/api/v1/config/**", "CONFIG", "GET");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (5, "CONFIG", "/api/v1/config/**", "CONFIG", "PATCH");
 
 INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (1, 1);
 INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (2, 2);
 INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (3, 3);
+INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (4, 3);
+INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (5, 3);
 
 
 
