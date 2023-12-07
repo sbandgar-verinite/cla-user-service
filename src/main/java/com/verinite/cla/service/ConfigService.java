@@ -32,4 +32,6 @@ public interface ConfigService {
 
 	StatusResponse mapPrivilegeToEndpoint(List<PrivilegeDto> privilege);
 
+	List<RoleDto> getRolesData();
+
 }

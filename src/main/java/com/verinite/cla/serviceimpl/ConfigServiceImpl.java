@@ -114,7 +114,8 @@ public class ConfigServiceImpl implements ConfigService {
 		for (RoleDto role : roleData) {
 			for (Role existingRole : existingRoleData) {
 				if (existingRole.getName().equalsIgnoreCase(role.getName())) {
-					List<String> existingPrivilege = existingRole.getPrivileges().stream().map(Privilege::getName).toList();
+					List<String> existingPrivilege = existingRole.getPrivileges().stream().map(Privilege::getName)
+							.toList();
 					for (PrivilegeDto privilege : role.getPrivileges()) {
 						if (!existingPrivilege.contains(privilege.getName())) {
 							Privilege newPrivilege = modelMapper.convertValue(privilege, Privilege.class);
@@ -270,4 +271,32 @@ public class ConfigServiceImpl implements ConfigService {
 		return new StatusResponse(Constants.SUCCESS, HttpStatus.OK.value(), "Privilege(s) Mapped Successfully");
 	}
 
+	@Override
+	public List<RoleDto> getRolesData() {
+		logger.info("Request to return all roles");
+		List<Role> rolesList = roleRepo.findAll();
+		return rolesList.stream().map(this::convertRoleDataToRoleDataDto).toList();
+	}
+
+	private RoleDto convertRoleDataToRoleDataDto(Role role) {
+		RoleDto roleDto = new RoleDto();
+		roleDto.setId(role.getId());
+		roleDto.setName(role.getName());
+		for (Privilege privilege : role.getPrivileges()) {
+			PrivilegeDto privilegeDto = new PrivilegeDto();
+			privilegeDto.setId(privilege.getId());
+			privilegeDto.setName(privilege.getName());
+			for (Endpoint endpoint : privilege.getEndpoints()) {
+				EndpointDto endpointDto = new EndpointDto();
+				endpointDto.setId(endpoint.getId());
+				endpointDto.setName(endpoint.getName());
+				endpointDto.setMethod(endpoint.getMethod());
+				endpointDto.setEndpointUri(endpoint.getEndpointUri());
+				endpointDto.setDescription(endpoint.getDescription());
+				privilegeDto.getEndpoints().add(endpointDto);
+			}
+			roleDto.getPrivileges().add(privilegeDto);
+		}
+		return roleDto;
+	}
 }

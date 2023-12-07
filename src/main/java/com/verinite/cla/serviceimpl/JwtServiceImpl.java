@@ -106,10 +106,6 @@ public class JwtServiceImpl implements JwtService {
 			throw new BadRequestException("Roles Not Found");
 		}
 
-		if (CollectionUtils.isEmpty(userData.get().getRoles())) {
-			throw new BadRequestException("Roles Not Found");
-		}
-
 		Set<Role> role = userData.get().getRoles();
 		Optional<Role> rolePrivilege = role.stream().findFirst();
 
