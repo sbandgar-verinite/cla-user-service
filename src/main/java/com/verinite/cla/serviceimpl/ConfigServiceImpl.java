@@ -118,8 +118,11 @@ public class ConfigServiceImpl implements ConfigService {
 							.toList();
 					for (PrivilegeDto privilege : role.getPrivileges()) {
 						if (!existingPrivilege.contains(privilege.getName())) {
-							Privilege newPrivilege = modelMapper.convertValue(privilege, Privilege.class);
-							existingRole.getPrivileges().add(newPrivilege);
+//							Privilege newPrivilege = modelMapper.convertValue(privilege, Privilege.class);
+							Optional<Privilege> ePrivilege = privilegeRepository.findByName(privilege.getName());
+							if (ePrivilege.isPresent()) {
+								existingRole.getPrivileges().add(ePrivilege.get());
+							}
 						}
 					}
 				}
@@ -257,11 +260,13 @@ public class ConfigServiceImpl implements ConfigService {
 		for (PrivilegeDto privilege : privileges) {
 			for (Privilege existingPrivilege : existingData) {
 				if (privilege.getName().equalsIgnoreCase(existingPrivilege.getName())) {
-					List<String> endpoints = existingPrivilege.getEndpoints().stream().map(Endpoint::getName).toList();
-					for (EndpointDto endpoint : privilege.getEndpoints()) {
-						if (!endpoints.contains(endpoint.getName())) {
-							Endpoint newEndpoint = modelMapper.convertValue(endpoint, Endpoint.class);
-							existingPrivilege.getEndpoints().add(newEndpoint);
+					for (Endpoint existingEndpoint : existingPrivilege.getEndpoints()) {
+						for (EndpointDto endpoint : privilege.getEndpoints()) {
+							if (!existingEndpoint.getEndpointUri().equalsIgnoreCase(endpoint.getEndpointUri())
+									&& !existingEndpoint.getMethod().equalsIgnoreCase(endpoint.getMethod())) {
+								Endpoint newEndpoint = modelMapper.convertValue(endpoint, Endpoint.class);
+								existingPrivilege.getEndpoints().add(newEndpoint);
+							}
 						}
 					}
 				}

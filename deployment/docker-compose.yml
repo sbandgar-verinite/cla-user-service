@@ -14,6 +14,7 @@ services:
       MYSQLDATA: /tmp/db/data
     volumes:
       - db-data:/tmp/db/data
+#      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "3306:3306"
     restart: unless-stopped

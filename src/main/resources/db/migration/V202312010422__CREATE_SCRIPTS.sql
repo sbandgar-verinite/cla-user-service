@@ -57,6 +57,20 @@ CREATE TABLE `privileges_endpoints` (
   CONSTRAINT `FK8s9gy7xkg046v9l3a51w3qf6h` FOREIGN KEY (`endpoint_id`) REFERENCES `endpoint` (`endpoint_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+create table tenants (
+	`id` bigint primary key,
+	`tenant_id` bigint NOT NULL,
+	`name` varchar(255) DEFAULT NULL,
+	`service` varchar(255) DEFAULT NULL,
+	`db_host` varchar(255) DEFAULT NULL,
+	`db_port` varchar(255) DEFAULT NULL,
+	`db_name` varchar(255) DEFAULT NULL,
+	`schema_name` varchar(255) DEFAULT NULL,
+	`flyway_user` varchar(255) DEFAULT NULL,
+	`flyway_password` varchar(255) DEFAULT NULL,
+	`app_user` varchar(255) DEFAULT NULL,
+	`app_password` varchar(255) DEFAULT NULL
+);
 
 INSERT INTO `user` (`user_id`, `email`, `name`, `password`) VALUES (1, "admin@verinite.com", "admin", "$2a$12$TiQjVYIJqZvBtd3d06lVbOq3JrdmclWhaKb8lgR//TO5XzNbKk.se");
 
@@ -73,11 +87,11 @@ INSERT INTO `roles_privileges` (`privilege_id`, `role_id`) VALUES (1, 1);
 INSERT INTO `roles_privileges` (`privilege_id`, `role_id`) VALUES (2, 1);
 INSERT INTO `roles_privileges` (`privilege_id`, `role_id`) VALUES (3, 1);
 
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (1, "SIGN-UP", "/api/v1/auth/signup", "SIGN_UP", "POST");
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (2, "SIGN-IN", "/api/v1/auth/signin", "SIGN_IN", "POST");
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (3, "CONFIG", "/api/v1/config/**", "CONFIG", "POST");
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (4, "CONFIG", "/api/v1/config/**", "CONFIG", "GET");
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (5, "CONFIG", "/api/v1/config/**", "CONFIG", "PATCH");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (1, "SIGNUP_POST", "/api/v1/auth/signup", "SIGNUP_POST", "POST");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (2, "SIGNIN_POST", "/api/v1/auth/signin", "SIGNIN_POST", "POST");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (3, "ALL_CONFIG_POST", "/api/v1/config/**", "ALL_CONFIG_POST", "POST");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (4, "ALL_CONFIG_GET", "/api/v1/config/**", "ALL_CONFIG_GET", "GET");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (5, "ALL_CONFIG_PATCH", "/api/v1/config/**", "ALL_CONFIG_PATCH", "PATCH");
 
 INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (1, 1);
 INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (2, 2);
