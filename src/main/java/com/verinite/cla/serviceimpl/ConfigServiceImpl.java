@@ -260,13 +260,18 @@ public class ConfigServiceImpl implements ConfigService {
 		for (PrivilegeDto privilege : privileges) {
 			for (Privilege existingPrivilege : existingData) {
 				if (privilege.getName().equalsIgnoreCase(existingPrivilege.getName())) {
-					for (Endpoint existingEndpoint : existingPrivilege.getEndpoints()) {
-						for (EndpointDto endpoint : privilege.getEndpoints()) {
+					for (EndpointDto endpoint : privilege.getEndpoints()) {
+						Boolean isExist = Boolean.FALSE;
+						for (Endpoint existingEndpoint : existingPrivilege.getEndpoints()) {
 							if (!existingEndpoint.getEndpointUri().equalsIgnoreCase(endpoint.getEndpointUri())
 									&& !existingEndpoint.getMethod().equalsIgnoreCase(endpoint.getMethod())) {
-								Endpoint newEndpoint = modelMapper.convertValue(endpoint, Endpoint.class);
-								existingPrivilege.getEndpoints().add(newEndpoint);
+								isExist = Boolean.TRUE;
 							}
+						}
+
+						if (Boolean.TRUE.equals(isExist)) {
+							Endpoint newEndpoint = modelMapper.convertValue(endpoint, Endpoint.class);
+							existingPrivilege.getEndpoints().add(newEndpoint);
 						}
 					}
 				}
