@@ -1,13 +1,21 @@
 package com.verinite.cla.model;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -15,17 +23,22 @@ import jakarta.persistence.Table;
 public class Tenant {
 
 	@Id
+	@Column(name = "tenant_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@JsonProperty("tenant_id")
-	private String tenantId;
+	@JsonProperty("tenant_code")
+	private String tenantCode;
 
 	@JsonProperty("tenant_name")
 	private String tenantName;
 
 	@JsonProperty("status")
 	private String status;
+
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = "user_tenant", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tenant_id"))
+	private Set<User> user = new HashSet<>();
 
 	@JsonProperty("created_on")
 	private ZonedDateTime createdOn;
@@ -47,12 +60,12 @@ public class Tenant {
 		this.id = id;
 	}
 
-	public String getTenantId() {
-		return tenantId;
+	public String getTenantCode() {
+		return tenantCode;
 	}
 
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
 	}
 
 	public String getTenantName() {
@@ -103,4 +116,11 @@ public class Tenant {
 		this.modifiedBy = modifiedBy;
 	}
 
+	public Set<User> getUser() {
+		return user;
+	}
+
+	public void setUser(Set<User> user) {
+		this.user = user;
+	}
 }

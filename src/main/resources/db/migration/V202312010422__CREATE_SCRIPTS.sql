@@ -57,20 +57,51 @@ CREATE TABLE `privileges_endpoints` (
   CONSTRAINT `FK8s9gy7xkg046v9l3a51w3qf6h` FOREIGN KEY (`endpoint_id`) REFERENCES `endpoint` (`endpoint_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-create table tenants (
-	`id` bigint primary key,
-	`tenant_id` bigint NOT NULL,
-	`name` varchar(255) DEFAULT NULL,
-	`service` varchar(255) DEFAULT NULL,
-	`db_host` varchar(255) DEFAULT NULL,
-	`db_port` varchar(255) DEFAULT NULL,
-	`db_name` varchar(255) DEFAULT NULL,
-	`schema_name` varchar(255) DEFAULT NULL,
-	`flyway_user` varchar(255) DEFAULT NULL,
-	`flyway_password` varchar(255) DEFAULT NULL,
-	`app_user` varchar(255) DEFAULT NULL,
-	`app_password` varchar(255) DEFAULT NULL
-);
+CREATE TABLE `application` (
+  `application_id` int NOT NULL AUTO_INCREMENT,
+  `application_name` varchar(255) DEFAULT NULL,
+  `application_number` varchar(255) DEFAULT NULL,
+  `status` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`application_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `tenant` (
+  `tenant_id` int NOT NULL AUTO_INCREMENT,
+  `created_by` varchar(255) DEFAULT NULL,
+  `created_on` datetime(6) DEFAULT NULL,
+  `modified_by` varchar(255) DEFAULT NULL,
+  `modified_on` datetime(6) DEFAULT NULL,
+  `status` varchar(255) DEFAULT NULL,
+  `tenant_code` varchar(255) DEFAULT NULL,
+  `tenant_name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`tenant_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `application_tenants` (
+  `application_application_id` int NOT NULL,
+  `tenants_tenant_id` int NOT NULL,
+  UNIQUE KEY `UK_60g622pd296phdjwk8ac10c7o` (`tenants_tenant_id`),
+  KEY `FKltkjer5kc0dtiyd7s0frq7l6n` (`application_application_id`),
+  CONSTRAINT `FKltkjer5kc0dtiyd7s0frq7l6n` FOREIGN KEY (`application_application_id`) REFERENCES `application` (`application_id`),
+  CONSTRAINT `FKoy6kqgax9tp4795rw8jl3iv39` FOREIGN KEY (`tenants_tenant_id`) REFERENCES `tenant` (`tenant_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `config` (
+  `config_id` bigint NOT NULL AUTO_INCREMENT,
+  `data` varchar(255) DEFAULT NULL,
+  `key_name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`config_id`),
+  UNIQUE KEY `UK_8c6dl7eofcfmo2y3p4gd93o3t` (`key_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `user_tenant` (
+  `user_id` int NOT NULL,
+  `tenant_id` bigint NOT NULL,
+  PRIMARY KEY (`user_id`,`tenant_id`),
+  KEY `FK5d635q2p1gie2n1y9alk5kgbh` (`tenant_id`),
+  CONSTRAINT `FK1e97sb7tts0u74wntv5f6keoy` FOREIGN KEY (`user_id`) REFERENCES `tenant` (`tenant_id`),
+  CONSTRAINT `FK5d635q2p1gie2n1y9alk5kgbh` FOREIGN KEY (`tenant_id`) REFERENCES `user` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `user` (`user_id`, `email`, `name`, `password`) VALUES (1, "admin@verinite.com", "admin", "$2a$12$TiQjVYIJqZvBtd3d06lVbOq3JrdmclWhaKb8lgR//TO5XzNbKk.se");
 

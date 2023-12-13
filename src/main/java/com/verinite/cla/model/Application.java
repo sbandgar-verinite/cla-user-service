@@ -33,10 +33,7 @@ public class Application {
 	@JsonProperty("status")
 	private String status;
 
-	@JsonProperty("tenant_id")
-	private String tenantId;
-
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Tenant> tenants = new ArrayList<>();
 
 	public Integer getId() {
@@ -79,11 +76,4 @@ public class Application {
 		this.tenants = tenants;
 	}
 
-	public String getTenantId() {
-		return tenantId;
-	}
-
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
 }
