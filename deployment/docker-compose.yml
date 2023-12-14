@@ -9,7 +9,7 @@ services:
 #    user: root:root
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: cla
+      MYSQL_DATABASE: ums
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin
       MYSQLDATA: /tmp/db/data

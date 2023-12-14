@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.verinite.cla.service.UserService;
@@ -26,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfiguration {
+public class SecurityConfiguration implements WebMvcConfigurer {
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
 	@Autowired
@@ -38,9 +39,9 @@ public class SecurityConfiguration {
 				.authorizeHttpRequests(request -> {
 					request.requestMatchers("/swagger-ui/**").permitAll();
 					request.requestMatchers("/v3/api-docs/**").permitAll();
-					request.requestMatchers("/api/v1/auth/**").permitAll();
-					request.requestMatchers("/api/v1/config/role").permitAll();
-					request.requestMatchers("/api/v1/resource/**").permitAll().anyRequest().authenticated();
+					request.requestMatchers("/auth/**").permitAll();
+					request.requestMatchers("/auth/config/role").permitAll();
+					request.requestMatchers("/auth/resource/**").permitAll().anyRequest().authenticated();
 				})
 				.sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
 				.authenticationProvider(authenticationProvider())
@@ -75,5 +76,16 @@ public class SecurityConfiguration {
                 registry.addMapping("/**").allowedOrigins("http://localhost:3000");
             }
         };
+    }
+	
+	@Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(tenantInterceptor())
+                .addPathPatterns("/auth/**");
+    }
+
+    @Bean
+    public TenantInterceptor tenantInterceptor() {
+        return new TenantInterceptor();
     }
 }

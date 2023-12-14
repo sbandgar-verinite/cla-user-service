@@ -2,13 +2,17 @@ package com.verinite.cla.config;
 
 public class TenantContext {
 
-    private static final ThreadLocal<String> CURRENT_TENANT = new ThreadLocal<>();
+    private static final ThreadLocal<String> currentTenant = new ThreadLocal<>();
 
     public static String getCurrentTenant() {
-        return CURRENT_TENANT.get();
+        return currentTenant.get();
     }
 
     public static void setCurrentTenant(String tenant) {
-        CURRENT_TENANT.set(tenant);
+    	currentTenant.set(tenant);
+    }
+    
+    public static void clear() {
+        currentTenant.remove();
     }
 }

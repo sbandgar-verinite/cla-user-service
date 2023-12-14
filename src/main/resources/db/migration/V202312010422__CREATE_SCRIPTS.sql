@@ -118,11 +118,11 @@ INSERT INTO `roles_privileges` (`privilege_id`, `role_id`) VALUES (1, 1);
 INSERT INTO `roles_privileges` (`privilege_id`, `role_id`) VALUES (2, 1);
 INSERT INTO `roles_privileges` (`privilege_id`, `role_id`) VALUES (3, 1);
 
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (1, "SIGNUP_POST", "/api/v1/auth/signup", "SIGNUP_POST", "POST");
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (2, "SIGNIN_POST", "/api/v1/auth/signin", "SIGNIN_POST", "POST");
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (3, "ALL_CONFIG_POST", "/api/v1/config/**", "ALL_CONFIG_POST", "POST");
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (4, "ALL_CONFIG_GET", "/api/v1/config/**", "ALL_CONFIG_GET", "GET");
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (5, "ALL_CONFIG_PATCH", "/api/v1/config/**", "ALL_CONFIG_PATCH", "PATCH");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (1, "SIGNUP_POST", "/api/ums/v1/auth/signup", "SIGNUP_POST", "POST");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (2, "SIGNIN_POST", "/api/ums/v1/auth/signin", "SIGNIN_POST", "POST");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (3, "ALL_CONFIG_POST", "/api/ums/v1/auth/config/**", "ALL_CONFIG_POST", "POST");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (4, "ALL_CONFIG_GET", "/api/ums/v1/auth/config/**", "ALL_CONFIG_GET", "GET");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (5, "ALL_CONFIG_PATCH", "/api/ums/v1/auth/config/**", "ALL_CONFIG_PATCH", "PATCH");
 
 INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (1, 1);
 INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (2, 2);
