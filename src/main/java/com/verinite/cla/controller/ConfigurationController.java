@@ -61,7 +61,7 @@ public class ConfigurationController {
 	public ResponseEntity<List<RoleDto>> getAllRoles() {
 		return ResponseEntity.ok(configService.getAllRoles());
 	}
-	
+
 	@GetMapping("/roles")
 	public ResponseEntity<List<RoleDto>> getRolesData() {
 		return ResponseEntity.ok(configService.getRolesData());
@@ -86,4 +86,5 @@ public class ConfigurationController {
 	public ResponseEntity<Object> getAllEndpoints() {
 		return ResponseEntity.ok(configService.getAllEndpoints());
 	}
+
 }

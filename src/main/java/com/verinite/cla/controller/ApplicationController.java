@@ -7,10 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import com.verinite.cla.dto.ApplicationDto;
+import com.verinite.cla.dto.StatusResponse;
 import com.verinite.cla.model.Tenant;
 import com.verinite.cla.model.User;
 import com.verinite.cla.service.ApplicationService;
@@ -19,27 +19,23 @@ import com.verinite.cla.service.UserService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
-@RequestMapping("/api/v1")
 public class ApplicationController {
 
 	@Autowired
-	private ApplicationService tenantService;
+	private ApplicationService applicationService;
 
 	@Autowired
 	private UserService userService;
 
-
-
 	@PostMapping("/application/tenant/add")
 	public ResponseEntity<Tenant> createTenant(@RequestBody Tenant tenant) {
-
-		Tenant saveTenent = tenantService.createTenant(tenant);
-		return new ResponseEntity<Tenant>(saveTenent, HttpStatus.CREATED);
+		Tenant saveTenent = applicationService.createTenant(tenant);
+		return new ResponseEntity<>(saveTenent, HttpStatus.CREATED);
 	}
 
 	@GetMapping("/application/tenant/get/all")
 	public ResponseEntity<List<Tenant>> getAllTenants() {
-		List<Tenant> allTenant = tenantService.getAllTenant();
+		List<Tenant> allTenant = applicationService.getAllTenant();
 		return new ResponseEntity<List<Tenant>>(allTenant, HttpStatus.OK);
 	}
 
@@ -49,6 +45,9 @@ public class ApplicationController {
 		return new ResponseEntity<List<User>>(allUser, HttpStatus.OK);
 	}
 
-
-
+	@PostMapping("/application/tenant/onboard")
+	public ResponseEntity<StatusResponse> onboardTenant(@RequestBody ApplicationDto applicationDto) {
+		StatusResponse statusReponse = applicationService.onboardTenant(applicationDto);
+		return new ResponseEntity<>(statusReponse, HttpStatus.OK);
+	}
 }

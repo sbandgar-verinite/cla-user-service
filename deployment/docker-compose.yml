@@ -6,6 +6,7 @@ services:
   db:
     image: mysql:8.1.0
     container_name: mysql
+#    user: root:root
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: cla
@@ -14,7 +15,7 @@ services:
       MYSQLDATA: /tmp/db/data
     volumes:
       - db-data:/tmp/db/data
-#      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.sh:/docker-entrypoint-initdb.d/init.sh
     ports:
       - "3306:3306"
     restart: unless-stopped
