@@ -6,6 +6,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.verinite.cla.dto.RoleDto;
+import com.verinite.cla.model.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 	@Autowired
 	private ApplicationRepository applicationRepo;
+
+	@Autowired
+	private ObjectMapper modelMapper;
 
 	@Autowired
 	private TenantRepository tenantRepository;
@@ -95,6 +101,31 @@ public class ApplicationServiceImpl implements ApplicationService {
 		}
 		logger.info("Tenant onboarded succesfully");
 		return new StatusResponse("Success", HttpStatus.OK.value(), "Onboarded Tenant Successfully");
+	}
+
+	@Override
+	public Application createApplication(ApplicationDto applicationDto) {
+
+		if(applicationDto == null)
+		{
+			throw new BadRequestException("Invalid Application Data");
+		}
+
+		Optional<Application> byApplicationNumber = applicationRepo.findByApplicationNumber(applicationDto.getApplicationNumber());
+
+		if(!byApplicationNumber.isEmpty())
+		{
+			throw new BadRequestException("Application Number Already Present  |  Duplication Occur ");
+		}
+
+		Application application = convertApplicationDtoToApplication(applicationDto);
+
+		return applicationRepo.save(application);
+	}
+
+
+	private Application convertApplicationDtoToApplication(ApplicationDto applicationDto) {
+		return modelMapper.convertValue(applicationDto, Application.class);
 	}
 
 }

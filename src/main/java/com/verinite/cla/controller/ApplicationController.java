@@ -2,6 +2,7 @@ package com.verinite.cla.controller;
 
 import java.util.List;
 
+import com.verinite.cla.model.Application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,5 +52,13 @@ public class ApplicationController {
 	public ResponseEntity<StatusResponse> onboardTenant(@RequestBody ApplicationDto applicationDto) {
 		StatusResponse statusReponse = applicationService.onboardTenant(applicationDto);
 		return new ResponseEntity<>(statusReponse, HttpStatus.OK);
+	}
+
+
+	@PostMapping("/add")
+	public ResponseEntity<Application> createApplication(@RequestBody ApplicationDto applicationDto)
+	{
+		Application application = applicationService.createApplication(applicationDto);
+		return new ResponseEntity<>(application, HttpStatus.CREATED);
 	}
 }
