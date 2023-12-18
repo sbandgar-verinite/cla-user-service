@@ -1,26 +1,31 @@
 package com.verinite.cla.config;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 
+import com.mysql.cj.jdbc.MysqlDataSource;
+import com.verinite.cla.dto.TenantRowMapper;
+import com.verinite.cla.model.Tenant;
 
 @Configuration
 public class DataSourceConfig {
-	
+
 	@Value("${spring.datasource.host}")
 	private String url;
-	
+
 	@Value("${spring.datasource.username}")
 	private String username;
-	
+
 	@Value("${spring.datasource.password}")
 	private String password;
 
@@ -32,39 +37,40 @@ public class DataSourceConfig {
 
 //	@Qualifier("firstDataSource") DataSource firstDataSource,
 //    @Qualifier("secondDataSource") DataSource secondDataSource
-	
-    @Bean
-    public DataSource dynamicDataSource() {
-    	DynamicDataSource dynamicDataSource = new DynamicDataSource();
-    	DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
-        Map<Object, Object> dataSourceMap = new HashMap<>();
+
+	@Bean
+	public DataSource dynamicDataSource() {
+		DynamicDataSource dynamicDataSource = new DynamicDataSource();
+		DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
+		Map<Object, Object> dataSourceMap = new HashMap<>();
 //        dataSourceMap.put("tenant-1", dynamicDataSource.determineCurrentLookupKey());
-        dataSourceBuilder.driverClassName(driverClassName);
-        dataSourceBuilder.username(username);
-        dataSourceBuilder.password(password);
-        
+		dataSourceBuilder.driverClassName(driverClassName);
+		dataSourceBuilder.username(username);
+		dataSourceBuilder.password(password);
+
+		MysqlDataSource mysqlDataSource = new MysqlDataSource();
+		mysqlDataSource.setUrl(defaultUrl);
+		mysqlDataSource.setPassword(password);
+		mysqlDataSource.setUser(username);
+		
 //        dataSourceMap.put(dataSourceBuilder, dataSourceMap);
 //        AbstractRoutingDataSource dataSource = new DynamicDataSource();
 //        dataSource.setDefaultTargetDataSource(resolvedDataSources.get("tenant_1"));
 //        dataSource.setTargetDataSources(resolvedDataSources);
 
-        
-        
-        if (!Objects.isNull(dynamicDataSource.determineCurrentLookupKey())) {
-        	url = url + dynamicDataSource.determineCurrentLookupKey();
-        	dataSourceBuilder.url(url);
-        	dataSourceMap.put(dynamicDataSource.determineCurrentLookupKey(), dataSourceBuilder.build());
-        	dynamicDataSource.setDefaultTargetDataSource(dataSourceMap.get(dynamicDataSource.determineCurrentLookupKey()));
-        	dynamicDataSource.setTargetDataSources(dataSourceMap);
-        }
-        else {
-        	dataSourceBuilder.url(defaultUrl);
-        	dataSourceMap.put("ums", dataSourceBuilder.build());
-        	dynamicDataSource.setDefaultTargetDataSource(dataSourceMap.get("ums"));
-        	dynamicDataSource.setTargetDataSources(dataSourceMap);
-        }
-        dynamicDataSource.afterPropertiesSet();
-        
-        return dynamicDataSource;
-    }
+		List<Tenant> tenantList =  new JdbcTemplate(mysqlDataSource).query("select * from tenant", new TenantRowMapper());
+//		List<Tenant> tenantList = tenantService.getAllTenant();
+		for(Tenant tenant : tenantList) {
+			dataSourceBuilder.url(url + tenant.getTenantCode());
+			dataSourceMap.put(tenant.getTenantCode(), dataSourceBuilder.build());
+		}
+		
+		dataSourceBuilder.url(defaultUrl);
+		dataSourceMap.put("default", dataSourceBuilder.build());
+		dynamicDataSource.setDefaultTargetDataSource(dataSourceMap.get("default"));
+		dynamicDataSource.setTargetDataSources(dataSourceMap);
+		dynamicDataSource.afterPropertiesSet();
+
+		return dynamicDataSource;
+	}
 }

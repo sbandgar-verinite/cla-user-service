@@ -69,7 +69,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 	@Override
 	public StatusResponse onboardTenant(ApplicationDto applicationDto) {
-		if (applicationDto == null || applicationDto.getApplicationNumber() != null) {
+		if (applicationDto == null || applicationDto.getApplicationNumber() == null) {
 			throw new BadRequestException("Invalid Json Data");
 		}
 		if (CollectionUtils.isEmpty(applicationDto.getTenants())) {
@@ -85,7 +85,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		if (tenantList.size() != applicationDto.getTenants().size()) {
 			throw new BadRequestException("Incorrect Tenant Ids passed");
 		}
-		applicationData.get().getTenants().addAll(tenantList);
+//		applicationData.get().getTenants().addAll(tenantList);
 		applicationRepo.save(applicationData.get());
 		String additionalParams = "?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true";
 		for (Tenant tenant : tenantList) {

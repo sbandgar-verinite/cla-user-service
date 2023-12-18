@@ -52,6 +52,15 @@ public class Tenant {
 	@JsonProperty("modified_by")
 	private String modifiedBy;
 
+	public Tenant() {
+	}
+
+	public Tenant(int id, String tenantCode, String tenantName) {
+		this.id = id;
+		this.tenantCode = tenantCode;
+		this.tenantName = tenantName;
+	}
+
 	public Integer getId() {
 		return id;
 	}
