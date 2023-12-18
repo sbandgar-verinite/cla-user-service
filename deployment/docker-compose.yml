@@ -17,7 +17,7 @@ services:
       - db-data:/tmp/db/data
       - ./init.sh:/docker-entrypoint-initdb.d/init.sh
     ports:
-      - "3307:3306"
+      - "3306:3306"
     restart: unless-stopped
     deploy:
       resources:

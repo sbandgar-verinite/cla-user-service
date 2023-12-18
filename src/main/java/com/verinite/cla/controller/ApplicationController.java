@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.verinite.cla.dto.ApplicationDto;
 import com.verinite.cla.dto.StatusResponse;
+import com.verinite.cla.dto.TenantDto;
 import com.verinite.cla.model.Application;
 import com.verinite.cla.model.Tenant;
 import com.verinite.cla.model.User;
@@ -28,12 +29,6 @@ public class ApplicationController {
 
 	@Autowired
 	private UserService userService;
-
-	@PostMapping("/tenant/add")
-	public ResponseEntity<Tenant> createTenant(@RequestBody Tenant tenant) {
-		Tenant saveTenent = applicationService.createTenant(tenant);
-		return new ResponseEntity<>(saveTenent, HttpStatus.CREATED);
-	}
 
 	@GetMapping("/tenant/get/all")
 	public ResponseEntity<List<Tenant>> getAllTenants() {
@@ -57,5 +52,11 @@ public class ApplicationController {
 	public ResponseEntity<Application> createApplication(@RequestBody ApplicationDto applicationDto) {
 		Application application = applicationService.createApplication(applicationDto);
 		return new ResponseEntity<>(application, HttpStatus.CREATED);
+	}
+
+	@PostMapping("/tenant/add")
+	public ResponseEntity<Tenant> createTenant(@RequestBody TenantDto tenantDto) {
+		Tenant createTenant = applicationService.createTenant(tenantDto);
+		return new ResponseEntity<>(createTenant, HttpStatus.CREATED);
 	}
 }

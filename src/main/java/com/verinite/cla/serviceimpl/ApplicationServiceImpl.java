@@ -57,9 +57,19 @@ public class ApplicationServiceImpl implements ApplicationService {
 	private JdbcTemplate jdbcTemplate;
 
 	@Override
-	public Tenant createTenant(Tenant tenant) {
-		Tenant save = tenantRepository.save(tenant);
+	public Tenant createTenant(TenantDto tenantDto) {
+		
+		if (tenantDto == null) {
+			throw new BadRequestException("Invalid Tenant Data");
+		}
+
+		Tenant covertTenantDtoToTenant = covertTenantDtoToTenant(tenantDto);
+		Tenant save = tenantRepository.save(covertTenantDtoToTenant);
 		return save;
+	}
+
+	private Tenant covertTenantDtoToTenant(TenantDto tenantDto) {
+		return modelMapper.convertValue(tenantDto, Tenant.class);
 	}
 
 	@Override
@@ -106,15 +116,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 	@Override
 	public Application createApplication(ApplicationDto applicationDto) {
 
-		if(applicationDto == null)
-		{
+		if (applicationDto == null) {
 			throw new BadRequestException("Invalid Application Data");
 		}
 
-		Optional<Application> byApplicationNumber = applicationRepo.findByApplicationNumber(applicationDto.getApplicationNumber());
+		Optional<Application> byApplicationNumber = applicationRepo
+				.findByApplicationNumber(applicationDto.getApplicationNumber());
 
-		if(!byApplicationNumber.isEmpty())
-		{
+		if (!byApplicationNumber.isEmpty()) {
 			throw new BadRequestException("Application Number Already Present  |  Duplication Occur ");
 		}
 
@@ -122,7 +131,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 		return applicationRepo.save(application);
 	}
-
 
 	private Application convertApplicationDtoToApplication(ApplicationDto applicationDto) {
 		return modelMapper.convertValue(applicationDto, Application.class);
