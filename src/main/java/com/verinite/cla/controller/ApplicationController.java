@@ -2,23 +2,22 @@ package com.verinite.cla.controller;
 
 import java.util.List;
 
-import com.verinite.cla.model.Application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.verinite.cla.dto.ApplicationDto;
 import com.verinite.cla.dto.StatusResponse;
+import com.verinite.cla.model.Application;
 import com.verinite.cla.model.Tenant;
 import com.verinite.cla.model.User;
 import com.verinite.cla.service.ApplicationService;
 import com.verinite.cla.service.UserService;
-
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
 @RequestMapping("/auth/application")
@@ -54,10 +53,8 @@ public class ApplicationController {
 		return new ResponseEntity<>(statusReponse, HttpStatus.OK);
 	}
 
-
 	@PostMapping("/add")
-	public ResponseEntity<Application> createApplication(@RequestBody ApplicationDto applicationDto)
-	{
+	public ResponseEntity<Application> createApplication(@RequestBody ApplicationDto applicationDto) {
 		Application application = applicationService.createApplication(applicationDto);
 		return new ResponseEntity<>(application, HttpStatus.CREATED);
 	}
