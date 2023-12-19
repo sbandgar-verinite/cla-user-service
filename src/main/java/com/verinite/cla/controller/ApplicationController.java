@@ -7,9 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.verinite.cla.dto.ApplicationDto;
@@ -41,6 +43,7 @@ public class ApplicationController {
 	@GetMapping("/users")
 	public ResponseEntity<List<User>> getAllUsers() {
 		List<User> allUser = userService.getAllUser();
+		System.out.println(allUser);
 		return new ResponseEntity<List<User>>(allUser, HttpStatus.OK);
 	}
 
@@ -60,5 +63,12 @@ public class ApplicationController {
 	public ResponseEntity<Tenant> createTenant(@RequestBody TenantDto tenantDto) {
 		Tenant createTenant = applicationService.createTenant(tenantDto);
 		return new ResponseEntity<>(createTenant, HttpStatus.CREATED);
+	}
+	
+	
+	@PatchMapping("/application/tenant/status")
+	public ResponseEntity<Tenant> updateTenantStatus(@RequestParam(name = "id") Integer id,@RequestParam(name = "status") String status){
+		Tenant updateTenantStatus = applicationService.updateTenantStatus(id, status);
+		return new ResponseEntity<Tenant>(updateTenantStatus,HttpStatus.OK);
 	}
 }

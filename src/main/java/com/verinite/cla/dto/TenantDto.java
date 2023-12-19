@@ -19,17 +19,6 @@ public class TenantDto {
 
 //	private Set<User> user = new HashSet<>();
 
-	@JsonProperty("created_on")
-	private ZonedDateTime createdOn;
-
-	@JsonProperty("created_by")
-	private String createdBy;
-
-	@JsonProperty("modified_on")
-	private ZonedDateTime modifiedOn;
-
-	@JsonProperty("modified_by")
-	private String modifiedBy;
 
 	public Integer getId() {
 		return id;
@@ -63,35 +52,5 @@ public class TenantDto {
 		this.status = status;
 	}
 
-	public ZonedDateTime getCreatedOn() {
-		return createdOn;
-	}
-
-	public void setCreatedOn(ZonedDateTime createdOn) {
-		this.createdOn = createdOn;
-	}
-
-	public String getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public ZonedDateTime getModifiedOn() {
-		return modifiedOn;
-	}
-
-	public void setModifiedOn(ZonedDateTime modifiedOn) {
-		this.modifiedOn = modifiedOn;
-	}
-
-	public String getModifiedBy() {
-		return modifiedBy;
-	}
-
-	public void setModifiedBy(String modifiedBy) {
-		this.modifiedBy = modifiedBy;
-	}
+	
 }

@@ -17,4 +17,7 @@ public interface ApplicationService {
 	public StatusResponse onboardTenant(ApplicationDto applicationDto);
 
 	public Application createApplication(ApplicationDto applicationDto);
+	
+	public Tenant updateTenantStatus(Integer id,String status);
+
 }

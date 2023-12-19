@@ -1,5 +1,7 @@
 package com.verinite.cla.dto;
 
+import java.util.Arrays;
+
 public class UserDto {
 
 	private Long id;
@@ -51,5 +53,13 @@ public class UserDto {
 	public void setPhoto(byte[] photo) {
 		this.photo = photo;
 	}
+
+	@Override
+	public String toString() {
+		return "UserDto [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password
+				+ ", photo=" + Arrays.toString(photo) + "]";
+	}
+	
+	
 
 }

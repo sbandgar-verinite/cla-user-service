@@ -6,9 +6,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.verinite.cla.dto.RoleDto;
-import com.verinite.cla.model.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +17,7 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.verinite.cla.controlleradvice.BadRequestException;
 import com.verinite.cla.dto.ApplicationDto;
 import com.verinite.cla.dto.StatusResponse;
@@ -58,7 +56,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 	@Override
 	public Tenant createTenant(TenantDto tenantDto) {
-		
+
 		if (tenantDto == null) {
 			throw new BadRequestException("Invalid Tenant Data");
 		}
@@ -134,6 +132,25 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 	private Application convertApplicationDtoToApplication(ApplicationDto applicationDto) {
 		return modelMapper.convertValue(applicationDto, Application.class);
+	}
+
+	@Override
+	public Tenant updateTenantStatus(Integer id, String status) {
+
+		Optional<Tenant> tenant = tenantRepository.findById(id);
+
+		tenant.get().setStatus(status);
+
+		Tenant save = tenantRepository.save(tenant.get());
+
+		return save;
+	}
+
+	private TenantDto mapToTenantDto(TenantDto tenantDto) {
+
+		TenantDto teDto = new TenantDto();
+		teDto.setStatus(tenantDto.getStatus());
+		return tenantDto;
 	}
 
 }
