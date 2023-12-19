@@ -23,10 +23,13 @@ import com.verinite.cla.controlleradvice.BadRequestException;
 import com.verinite.cla.dto.ApplicationDto;
 import com.verinite.cla.dto.StatusResponse;
 import com.verinite.cla.dto.TenantDto;
+import com.verinite.cla.dto.UserDto;
 import com.verinite.cla.model.Application;
 import com.verinite.cla.model.Tenant;
+import com.verinite.cla.model.User;
 import com.verinite.cla.repository.ApplicationRepository;
 import com.verinite.cla.repository.TenantRepository;
+import com.verinite.cla.repository.UserRepository;
 import com.verinite.cla.service.ApplicationService;
 
 @Service
@@ -51,6 +54,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 	@Value("${spring.datasource.password}")
 	private String dbPass;
+
+	@Autowired
+	private UserRepository userRepo;
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -222,6 +228,50 @@ public class ApplicationServiceImpl implements ApplicationService {
 		TenantDto teDto = new TenantDto();
 		teDto.setStatus(tenantDto.getStatus());
 		return tenantDto;
+	}
+
+	@Override
+	public StatusResponse mapApplicationTenantUser(ApplicationDto applicationDto) {
+		logger.info("Request received to map application to user");
+		if (applicationDto == null) {
+			throw new BadRequestException("Invalid Application Data");
+		}
+
+		Optional<Application> applicationData = applicationRepo
+				.findByApplicationNumber(applicationDto.getApplicationNumber());
+
+		if (applicationData.isEmpty()) {
+			throw new BadRequestException("Application Not Found for requested application number");
+		}
+
+		if (CollectionUtils.isEmpty(applicationDto.getTenants())) {
+			throw new BadRequestException("Empty Tenant List not accepted for Mapping Users");
+		}
+
+		for (TenantDto tenant : applicationDto.getTenants()) {
+			if (tenant.getTenantCode() != null) {
+				Optional<Tenant> tenantData = tenantRepository.findByTenantCode(tenant.getTenantCode());
+				if (tenantData.isEmpty()) {
+					throw new BadRequestException("Tenant Data Not Found");
+				}
+
+				if (!CollectionUtils.isEmpty(tenant.getUsers())) {
+					for (UserDto user : tenant.getUsers()) {
+						Optional<User> userData = userRepo.findByEmail(user.getEmail());
+						if (userData.isPresent() && !tenantData.get().getUser().contains(userData.get())) {
+							tenantData.get().getUser().add(userData.get());
+						}
+					}
+				}
+
+				if (!applicationData.get().getTenants().contains(tenantData.get())) {
+					applicationData.get().getTenants().add(tenantData.get());
+				}
+			}
+		}
+
+		logger.info("User Tenant Mapped succesfully");
+		return new StatusResponse("Success", HttpStatus.OK.value(), "User Tenant Mapped Successfully");
 	}
 
 }
