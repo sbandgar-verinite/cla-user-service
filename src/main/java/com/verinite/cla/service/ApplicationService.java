@@ -10,18 +10,20 @@ import com.verinite.cla.model.Tenant;
 
 public interface ApplicationService {
 
-	public Tenant createTenant(TenantDto tenantDto);
+    public TenantDto createTenant(TenantDto tenantDto);
 
-	List<Tenant> getAllTenant();
+    List<Tenant> getAllTenant();
 
-	public StatusResponse onboardTenant(ApplicationDto applicationDto);
+    public StatusResponse onboardTenant(ApplicationDto applicationDto);
 
-	public ApplicationDto createApplication(ApplicationDto applicationDto);
+    public ApplicationDto createApplication(ApplicationDto applicationDto);
 
-	public List<Application> getAllApplication(String appNum);
-	
-	public Tenant updateTenantStatus(Integer id,String status);
+    public List<Application> getAllApplication(String appNum);
 
-	public  ApplicationDto updateApplicationStatus(String appName , String status);
+    public Tenant updateTenantStatus(Integer id, String status);
+
+    public ApplicationDto updateApplicationStatus(String appName, String status);
+
+    public Tenant getTenantDetails(Integer id);
 
 }

@@ -34,6 +34,13 @@ public class ApplicationController {
     @Autowired
     private UserService userService;
 
+    @PostMapping("/tenant/add")
+    public ResponseEntity<TenantDto> createTenant(@RequestBody TenantDto tenantDto) {
+        // Tenant createTenant = applicationService.createTenant(tenantDto);
+        TenantDto createTenant = applicationService.createTenant(tenantDto);
+        return new ResponseEntity<>(createTenant, HttpStatus.CREATED);
+    }
+
     @GetMapping("/tenant/get/all")
     public ResponseEntity<List<Tenant>> getAllTenants() {
         List<Tenant> allTenant = applicationService.getAllTenant();
@@ -66,11 +73,6 @@ public class ApplicationController {
         return new ResponseEntity<List<Application>>(allApplication, HttpStatus.OK);
     }
 
-    @PostMapping("/tenant/add")
-    public ResponseEntity<Tenant> createTenant(@RequestBody TenantDto tenantDto) {
-        Tenant createTenant = applicationService.createTenant(tenantDto);
-        return new ResponseEntity<>(createTenant, HttpStatus.CREATED);
-    }
 
     @PatchMapping("/application/tenant/status")
     public ResponseEntity<Tenant> updateTenantStatus(@RequestParam(name = "id") Integer id,
@@ -85,8 +87,14 @@ public class ApplicationController {
 
         ApplicationDto applicationDto = applicationService.updateApplicationStatus(applicationNumber, status);
 
-        return new ResponseEntity<>(applicationDto , HttpStatus.OK);
+        return new ResponseEntity<>(applicationDto, HttpStatus.OK);
 
+    }
+
+    @GetMapping("/application/tenant/details")
+    public ResponseEntity<Tenant> getTenantDetails(@RequestParam(name = "id") Integer id) {
+        Tenant tenantDetails = applicationService.getTenantDetails(id);
+        return new ResponseEntity<Tenant>(tenantDetails, HttpStatus.OK);
     }
 
 //	@PostMapping("/tenant/user")
