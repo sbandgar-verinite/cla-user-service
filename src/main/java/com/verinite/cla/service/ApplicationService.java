@@ -16,8 +16,12 @@ public interface ApplicationService {
 
 	public StatusResponse onboardTenant(ApplicationDto applicationDto);
 
-	public Application createApplication(ApplicationDto applicationDto);
+	public ApplicationDto createApplication(ApplicationDto applicationDto);
+
+	public List<Application> getAllApplication(String appNum);
 	
 	public Tenant updateTenantStatus(Integer id,String status);
+
+	public  ApplicationDto updateApplicationStatus(String appName , String status);
 
 }
