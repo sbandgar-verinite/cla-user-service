@@ -35,15 +35,12 @@ public class SecurityConfiguration implements WebMvcConfigurer {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf(AbstractHttpConfigurer::disable)
-				.authorizeHttpRequests(request -> {
-					request.requestMatchers("/swagger-ui/**").permitAll();
-					request.requestMatchers("/v3/api-docs/**").permitAll();
-					request.requestMatchers("/auth/**").permitAll();
-					request.requestMatchers("/auth/config/role").permitAll();
-					request.requestMatchers("/auth/resource/**").permitAll().anyRequest().authenticated();
-				})
-				.sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
+		http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(request -> {
+			request.requestMatchers("/swagger-ui/**").permitAll();
+			request.requestMatchers("/v3/api-docs/**").permitAll();
+			request.requestMatchers("/signin").permitAll();
+			request.requestMatchers("/signup").permitAll().anyRequest().authenticated();
+		}).sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
 				.authenticationProvider(authenticationProvider())
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
@@ -66,26 +63,24 @@ public class SecurityConfiguration implements WebMvcConfigurer {
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 		return config.getAuthenticationManager();
 	}
-	
-	@Bean
-    public WebMvcConfigurer corsConfigurer()
-    {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("http://localhost:3000");
-            }
-        };
-    }
-	
-	@Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(tenantInterceptor())
-                .addPathPatterns("/auth/**");
-    }
 
-    @Bean
-    public TenantInterceptor tenantInterceptor() {
-        return new TenantInterceptor();
-    }
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/**").allowedOrigins("http://localhost:3000");
+			}
+		};
+	}
+
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(tenantInterceptor()).addPathPatterns("/auth/**");
+	}
+
+	@Bean
+	public TenantInterceptor tenantInterceptor() {
+		return new TenantInterceptor();
+	}
 }

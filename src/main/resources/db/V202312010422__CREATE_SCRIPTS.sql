@@ -106,30 +106,36 @@ CREATE TABLE `user_tenant` (
 INSERT INTO `user` (`user_id`, `email`, `name`, `password`) VALUES (1, "admin@verinite.com", "admin", "$2a$12$TiQjVYIJqZvBtd3d06lVbOq3JrdmclWhaKb8lgR//TO5XzNbKk.se");
 
 INSERT INTO `role` (`role_id`, `name`) VALUES (1, "ADMIN");
-INSERT INTO `role` (`role_id`, `name`) VALUES (2, "USER");
 
 INSERT INTO `user_role` (`role_id`, `user_id`) VALUES (1, 1);
 
 INSERT INTO `privilege` (`privilege_id`, `name`) VALUES (1, "SIGNUP");
 INSERT INTO `privilege` (`privilege_id`, `name`) VALUES (2, "SIGNIN");
 INSERT INTO `privilege` (`privilege_id`, `name`) VALUES (3, "CONFIG");
+INSERT INTO `privilege` (`privilege_id`, `name`) VALUES (4, "APPLICATION");
 
 INSERT INTO `roles_privileges` (`privilege_id`, `role_id`) VALUES (1, 1);
 INSERT INTO `roles_privileges` (`privilege_id`, `role_id`) VALUES (2, 1);
 INSERT INTO `roles_privileges` (`privilege_id`, `role_id`) VALUES (3, 1);
+INSERT INTO `roles_privileges` (`privilege_id`, `role_id`) VALUES (4, 1);
 
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (1, "SIGNUP_POST", "/api/ums/v1/auth/signup", "SIGNUP_POST", "POST");
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (2, "SIGNIN_POST", "/api/ums/v1/auth/signin", "SIGNIN_POST", "POST");
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (3, "ALL_CONFIG_POST", "/api/ums/v1/auth/config/**", "ALL_CONFIG_POST", "POST");
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (4, "ALL_CONFIG_GET", "/api/ums/v1/auth/config/**", "ALL_CONFIG_GET", "GET");
-INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (5, "ALL_CONFIG_PATCH", "/api/ums/v1/auth/config/**", "ALL_CONFIG_PATCH", "PATCH");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (1, "SIGNUP_POST", "/api/ums/v1/signup", "SIGNUP_POST", "POST");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (2, "SIGNIN_POST", "/api/ums/v1/signin", "SIGNIN_POST", "POST");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (3, "ALL_CONFIG_POST", "/api/ums/v1/config/**", "ALL_CONFIG_POST", "POST");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (4, "ALL_CONFIG_GET", "/api/ums/v1/config/**", "ALL_CONFIG_GET", "GET");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (5, "ALL_CONFIG_PATCH", "/api/ums/v1/config/**", "ALL_CONFIG_PATCH", "PATCH");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (6, "ALL_APPLICATION_POST", "/api/ums/v1/application/**", "ALL_APPLICATION_POST", "POST");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (7, "ALL_APPLICATION_GET", "/api/ums/v1/application/**", "ALL_APPLICATION_GET", "GET");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (8, "ALL_APPLICATION_PATCH", "/api/ums/v1/application/**", "ALL_APPLICATION_PATCH", "PATCH");
 
 INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (1, 1);
 INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (2, 2);
 INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (3, 3);
 INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (4, 3);
 INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (5, 3);
-
+INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (6, 4);
+INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (7, 4);
+INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (8, 4);
 
 
 

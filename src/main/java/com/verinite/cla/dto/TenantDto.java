@@ -1,6 +1,7 @@
 package com.verinite.cla.dto;
 
-import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -17,8 +18,8 @@ public class TenantDto {
 	@JsonProperty("status")
 	private String status;
 
-//	private Set<User> user = new HashSet<>();
-
+	@JsonProperty("users")
+	private List<UserDto> users = new ArrayList<>();
 
 	public Integer getId() {
 		return id;
@@ -52,5 +53,11 @@ public class TenantDto {
 		this.status = status;
 	}
 
-	
+	public List<UserDto> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<UserDto> users) {
+		this.users = users;
+	}
 }

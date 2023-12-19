@@ -64,11 +64,17 @@ public class ApplicationController {
 		Tenant createTenant = applicationService.createTenant(tenantDto);
 		return new ResponseEntity<>(createTenant, HttpStatus.CREATED);
 	}
-	
-	
+
 	@PatchMapping("/application/tenant/status")
-	public ResponseEntity<Tenant> updateTenantStatus(@RequestParam(name = "id") Integer id,@RequestParam(name = "status") String status){
+	public ResponseEntity<Tenant> updateTenantStatus(@RequestParam(name = "id") Integer id,
+			@RequestParam(name = "status") String status) {
 		Tenant updateTenantStatus = applicationService.updateTenantStatus(id, status);
-		return new ResponseEntity<Tenant>(updateTenantStatus,HttpStatus.OK);
+		return new ResponseEntity<Tenant>(updateTenantStatus, HttpStatus.OK);
 	}
+
+//	@PostMapping("/tenant/user")
+//	public ResponseEntity<StatusResponse> onboardTenant(@RequestBody ApplicationDto applicationDto) {
+//		StatusResponse statusReponse = applicationService.onboardTenant(applicationDto);
+//		return new ResponseEntity<>(statusReponse, HttpStatus.OK);
+//	}
 }
