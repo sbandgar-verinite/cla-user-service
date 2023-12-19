@@ -21,10 +21,12 @@ import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.verinite.cla.controlleradvice.BadRequestException;
 import com.verinite.cla.dto.ApplicationDto;
+import com.verinite.cla.dto.RoleDto;
 import com.verinite.cla.dto.StatusResponse;
 import com.verinite.cla.dto.TenantDto;
 import com.verinite.cla.dto.UserDto;
 import com.verinite.cla.model.Application;
+import com.verinite.cla.model.Role;
 import com.verinite.cla.model.Tenant;
 import com.verinite.cla.model.User;
 import com.verinite.cla.repository.ApplicationRepository;
@@ -98,8 +100,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 	}
 
 	@Override
-	public List<Tenant> getAllTenant() {
-		return tenantRepository.findAll();
+	public List<TenantDto> getAllTenant() {
+		List<Tenant> tenantList = tenantRepository.findAll();
+		return tenantList.stream().map(this::convertTenantToTenantDto).toList();
 	}
 
 	@Override
@@ -141,9 +144,11 @@ public class ApplicationServiceImpl implements ApplicationService {
 	@Override
 	public ApplicationDto createApplication(ApplicationDto applicationDto) {
 
-		if (applicationDto == null) {
+		if (applicationDto == null || applicationDto.getApplicationNumber().isEmpty() || applicationDto.getApplicationNumber() == "") {
 			throw new BadRequestException("Invalid Application Data");
 		}
+		
+		//applicationDto == null || applicationDto.getApplicationNumber().isEmpty() || applicationDto.getApplicationNumber() == ""
 
 		Optional<Application> byApplicationNumber = applicationRepo
 				.findByApplicationNumber(applicationDto.getApplicationNumber());

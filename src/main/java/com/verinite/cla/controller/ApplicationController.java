@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.verinite.cla.dto.ApplicationDto;
+import com.verinite.cla.dto.RoleDto;
 import com.verinite.cla.dto.StatusResponse;
 import com.verinite.cla.dto.TenantDto;
 import com.verinite.cla.model.Application;
@@ -33,6 +34,7 @@ public class ApplicationController {
 
     @Autowired
     private UserService userService;
+    
 
     @PostMapping("/tenant/add")
     public ResponseEntity<TenantDto> createTenant(@RequestBody TenantDto tenantDto) {
@@ -42,9 +44,9 @@ public class ApplicationController {
     }
 
     @GetMapping("/tenant/get/all")
-    public ResponseEntity<List<Tenant>> getAllTenants() {
-        List<Tenant> allTenant = applicationService.getAllTenant();
-        return new ResponseEntity<List<Tenant>>(allTenant, HttpStatus.OK);
+    public ResponseEntity<List<TenantDto>> getAllTenants() {
+       
+        return ResponseEntity.ok(applicationService.getAllTenant());
     }
 
     @GetMapping("/users")

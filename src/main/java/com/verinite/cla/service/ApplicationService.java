@@ -12,7 +12,8 @@ public interface ApplicationService {
 
 	public TenantDto createTenant(TenantDto tenantDto);
 
-	List<Tenant> getAllTenant();
+    List<TenantDto> getAllTenant();
+
 
 	public StatusResponse onboardTenant(ApplicationDto applicationDto);
 
