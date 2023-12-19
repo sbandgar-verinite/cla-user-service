@@ -12,6 +12,7 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.util.CollectionUtils;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 import com.verinite.cla.dto.TenantRowMapper;
@@ -43,7 +44,6 @@ public class DataSourceConfig {
 		DynamicDataSource dynamicDataSource = new DynamicDataSource();
 		DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
 		Map<Object, Object> dataSourceMap = new HashMap<>();
-//        dataSourceMap.put("tenant-1", dynamicDataSource.determineCurrentLookupKey());
 		dataSourceBuilder.driverClassName(driverClassName);
 		dataSourceBuilder.username(username);
 		dataSourceBuilder.password(password);
@@ -59,10 +59,12 @@ public class DataSourceConfig {
 //        dataSource.setTargetDataSources(resolvedDataSources);
 
 		List<Tenant> tenantList =  new JdbcTemplate(mysqlDataSource).query("select * from tenant", new TenantRowMapper());
-//		List<Tenant> tenantList = tenantService.getAllTenant();
-		for(Tenant tenant : tenantList) {
-			dataSourceBuilder.url(url + tenant.getTenantCode());
-			dataSourceMap.put(tenant.getTenantCode(), dataSourceBuilder.build());
+		
+		if (!CollectionUtils.isEmpty(tenantList)) {
+			for(Tenant tenant : tenantList) {
+				dataSourceBuilder.url(url + tenant.getTenantCode());
+				dataSourceMap.put(tenant.getTenantCode(), dataSourceBuilder.build());
+			}
 		}
 		
 		dataSourceBuilder.url(defaultUrl);
