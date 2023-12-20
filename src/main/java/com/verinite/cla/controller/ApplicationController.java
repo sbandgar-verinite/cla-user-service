@@ -82,13 +82,12 @@ public class ApplicationController {
         ApplicationDto applicationDto = applicationService.updateApplicationStatus(applicationNumber, status);
 
         return new ResponseEntity<>(applicationDto, HttpStatus.OK);
-
     }
 
     @GetMapping("/application/tenant/details")
-    public ResponseEntity<Tenant> getTenantDetails(@RequestParam(name = "id") Integer id) {
-        Tenant tenantDetails = applicationService.getTenantDetails(id);
-        return new ResponseEntity<Tenant>(tenantDetails, HttpStatus.OK);
+    public ResponseEntity<TenantDto> getTenantDetails(@RequestParam(name = "tenantCode") String tenantCode) {
+        TenantDto tenantDetails = applicationService.getTenantDetails(tenantCode);
+        return new ResponseEntity<TenantDto>(tenantDetails, HttpStatus.OK);
     }
 
 	@PostMapping("/tenant/user")

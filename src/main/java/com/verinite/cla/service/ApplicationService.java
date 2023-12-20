@@ -25,8 +25,9 @@ public interface ApplicationService {
 
 	public ApplicationDto updateApplicationStatus(String appName, String status);
 
-	public Tenant getTenantDetails(Integer id);
+//	public Tenant getTenantDetails(Integer id);
 
+	public TenantDto getTenantDetails(String tenantCode);
 	public StatusResponse mapApplicationTenantUser(ApplicationDto applicationDto);
 
 }

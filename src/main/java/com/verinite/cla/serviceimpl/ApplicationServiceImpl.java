@@ -246,13 +246,20 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Tenant getTenantDetails(Integer id) {
-        Optional<Tenant> findById = tenantRepository.findById(id);
-        if (findById.isPresent()) {
-            findById.get();
+    public TenantDto getTenantDetails(String tenantCode) {
+
+        if (tenantCode == null){
+            throw new BadRequestException("tenant details not found.");
         }
-        return null;
+        Optional<Tenant> findByTenantCode = tenantRepository.findByTenantCode(tenantCode);
+
+        if(findByTenantCode.isEmpty()) {
+            throw new BadRequestException("tenant details not found.");
+        }
+        TenantDto convertTenantToTenantDto = convertTenantToTenantDto(findByTenantCode.get());
+        return convertTenantToTenantDto;
     }
+
 
     private TenantDto mapToTenantDto(TenantDto tenantDto) {
 
