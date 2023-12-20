@@ -3,6 +3,8 @@ package com.verinite.cla.serviceimpl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.verinite.cla.dto.UserDto;
 import com.verinite.cla.model.Privilege;
 import com.verinite.cla.model.Role;
 import com.verinite.cla.model.User;
@@ -66,9 +69,25 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<User> getAllUser() {
+	public List<UserDto> getAllUser() {
 
-		return userRepository.findAll();
+		List<User> findAll = userRepository.findAll();
+
+		List<UserDto> dtos = findAll.stream().map(user -> userToUserDto(user)).collect(Collectors.toList());
+		return dtos;
+
+	}
+
+	public UserDto userToUserDto(User user) {
+
+		UserDto userDto = new UserDto();
+
+		userDto.setUsername(user.getUsername());
+		userDto.setPassword(user.getPassword());
+		userDto.setEmail(user.getEmail());
+		userDto.setId(user.getId());
+
+		return userDto;
 
 	}
 }
