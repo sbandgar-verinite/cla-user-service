@@ -19,7 +19,7 @@ public interface ApplicationService {
 
 	public ApplicationDto createApplication(ApplicationDto applicationDto);
 
-	public List<Application> getAllApplication(String appNum);
+	public List<ApplicationDto> getAllApplication(String appNum);
 
 	public Tenant updateTenantStatus(Integer id, String status);
 
