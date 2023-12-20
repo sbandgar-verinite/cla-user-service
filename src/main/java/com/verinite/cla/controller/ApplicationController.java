@@ -38,7 +38,6 @@ public class ApplicationController {
 
 	@GetMapping("/tenant/get/all")
 	public ResponseEntity<List<TenantDto>> getAllTenants() {
-
 		return ResponseEntity.ok(applicationService.getAllTenant());
 	}
 

@@ -38,6 +38,7 @@ public class SecurityConfiguration implements WebMvcConfigurer {
 		http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(request -> {
 			request.requestMatchers("/swagger-ui/**").permitAll();
 			request.requestMatchers("/v3/api-docs/**").permitAll();
+			request.requestMatchers("/error").permitAll();
 			request.requestMatchers("/signin").permitAll();
 			request.requestMatchers("/signup").permitAll().anyRequest().authenticated();
 		}).sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))

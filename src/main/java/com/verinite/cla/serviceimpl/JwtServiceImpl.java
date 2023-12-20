@@ -31,6 +31,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Service
 public class JwtServiceImpl implements JwtService {
@@ -40,6 +41,9 @@ public class JwtServiceImpl implements JwtService {
 
 	@Value("${token.signing.key}")
 	private String jwtSigningKey;
+
+	@Value("${token.expiry}")
+	private Long tokenExpiryInMinutes;
 
 	@Override
 	public String extractUserName(String token) {
@@ -73,7 +77,7 @@ public class JwtServiceImpl implements JwtService {
 		return Jwts.builder().setClaims(extraClaims)
 //        		.setSubject(userDetails.getUsername())
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * tokenExpiryInMinutes))
 				.signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
 	}
 

@@ -13,10 +13,12 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.verinite.cla.controlleradvice.UnAuthorizedException;
+import com.verinite.cla.controlleradvice.BadRequestException;
+import com.verinite.cla.controlleradvice.JwtTokenMissingException;
 import com.verinite.cla.service.JwtService;
 import com.verinite.cla.service.UserService;
 
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,9 +41,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		final String userEmail;
 		if (StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader, "Bearer ")) {
 			filterChain.doFilter(request, response);
-//			throw new ForbiddenException("Invalid Bearer Token");
+//				throw new ForbiddenException("Invalid Bearer Token");
 			return;
 		}
+
 		jwt = authHeader.substring(7);
 		userEmail = jwtService.extractEmail(jwt);
 		if (StringUtils.isNotEmpty(userEmail) && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -53,8 +56,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				context.setAuthentication(authToken);
 				SecurityContextHolder.setContext(context);
-			} else {
-				throw new UnAuthorizedException("Authentication Failed");
 			}
 
 			jwtService.checkRoleBasedAccess(userEmail, request.getRequestURI(), request.getMethod());

@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.verinite.cla.controlleradvice.UnAuthorizedException;
 import com.verinite.cla.dto.JwtAuthenticationResponse;
 import com.verinite.cla.dto.SignUpRequest;
 import com.verinite.cla.dto.SigninRequest;
@@ -21,6 +22,7 @@ import com.verinite.cla.repository.UserRepository;
 import com.verinite.cla.service.AuthenticationService;
 import com.verinite.cla.service.JwtService;
 
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -70,12 +72,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	@Override
 	public JwtAuthenticationResponse signin(SigninRequest request) {
-		authenticationManager
-				.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+		try {
+			authenticationManager
+					.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+		} catch (RuntimeException e) {
+			throw new UnAuthorizedException("Invalid Credentials");
+		}
 		User user = userRepository.findByEmail(request.getEmail())
 				.orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
 		var jwt = jwtService.generateToken(user);
-		String role = user.getRoles() != null && user.getRoles().iterator().hasNext() ? user.getRoles().iterator().next().getName() : null;
+		String role = user.getRoles() != null && user.getRoles().iterator().hasNext()
+				? user.getRoles().iterator().next().getName()
+				: null;
 		return new JwtAuthenticationResponse(jwt, user.getEmail(), role, user.getName());
 	}
 }
