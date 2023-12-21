@@ -42,9 +42,9 @@ public class UserDto {
 		return password;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+//	public void setPassword(String password) {
+//		this.password = password;
+//	}
 
 	public byte[] getPhoto() {
 		return photo;
