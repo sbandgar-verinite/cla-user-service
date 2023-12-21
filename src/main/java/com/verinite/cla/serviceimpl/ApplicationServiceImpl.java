@@ -125,12 +125,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (tenantList.size() != applicationDto.getTenants().size()) {
             throw new BadRequestException("Incorrect Tenant Ids passed");
         }
-//		applicationData.get().getTenants().addAll(tenantList);
+		applicationData.get().getTenants().addAll(tenantList);
         applicationRepo.save(applicationData.get());
         String additionalParams = "?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true";
         for (Tenant tenant : tenantList) {
-            String dbName = applicationData.get().getApplicationName().toLowerCase() + "_" + tenant.getTenantCode();
-            String url = dbHost + dbName + additionalParams;
+            String url = dbHost + tenant.getTenantCode().toLowerCase() + additionalParams;
             Connection db = null;
             try {
                 db = DriverManager.getConnection(url, dbUser, dbPass);
@@ -307,7 +306,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 }
             }
         }
-
+        applicationRepo.save(applicationData.get());
         logger.info("User Tenant Mapped succesfully");
         return new StatusResponse("Success", HttpStatus.OK.value(), "User Tenant Mapped Successfully");
     }
