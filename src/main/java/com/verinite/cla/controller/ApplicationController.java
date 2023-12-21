@@ -23,74 +23,79 @@ import com.verinite.cla.service.UserService;
 @RequestMapping("/application")
 public class ApplicationController {
 
-	@Autowired
-	private ApplicationService applicationService;
+    @Autowired
+    private ApplicationService applicationService;
 
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private UserService userService;
 
-	@PostMapping("/tenant/add")
-	public ResponseEntity<TenantDto> createTenant(@RequestBody TenantDto tenantDto) {
-		// Tenant createTenant = applicationService.createTenant(tenantDto);
-		TenantDto createTenant = applicationService.createTenant(tenantDto);
-		return new ResponseEntity<>(createTenant, HttpStatus.CREATED);
-	}
+    @PostMapping("/tenant/add")
+    public ResponseEntity<TenantDto> createTenant(@RequestBody TenantDto tenantDto) {
+        // Tenant createTenant = applicationService.createTenant(tenantDto);
+        TenantDto createTenant = applicationService.createTenant(tenantDto);
+        return new ResponseEntity<>(createTenant, HttpStatus.CREATED);
+    }
 
-	@GetMapping("/tenant/get/all")
-	public ResponseEntity<List<TenantDto>> getAllTenants() {
-		return ResponseEntity.ok(applicationService.getAllTenant());
-	}
+    @GetMapping("/tenant/get/all")
+    public ResponseEntity<List<TenantDto>> getAllTenants() {
+        return ResponseEntity.ok(applicationService.getAllTenant());
+    }
 
-	@GetMapping("/users")
-	public ResponseEntity<List<UserDto>> getAllUsers() {
-		List<UserDto> allUser = userService.getAllUser();
-		return new ResponseEntity<List<UserDto>>(allUser, HttpStatus.OK);
-	}
+    @GetMapping("/users")
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        List<UserDto> allUser = userService.getAllUser();
+        return new ResponseEntity<List<UserDto>>(allUser, HttpStatus.OK);
+    }
 
-	@PostMapping("/tenant/onboard")
-	public ResponseEntity<StatusResponse> onboardTenant(@RequestBody ApplicationDto applicationDto) {
-		StatusResponse statusReponse = applicationService.onboardTenant(applicationDto);
-		return new ResponseEntity<>(statusReponse, HttpStatus.OK);
-	}
+    @PostMapping("/tenant/onboard")
+    public ResponseEntity<StatusResponse> onboardTenant(@RequestBody ApplicationDto applicationDto) {
+        StatusResponse statusReponse = applicationService.onboardTenant(applicationDto);
+        return new ResponseEntity<>(statusReponse, HttpStatus.OK);
+    }
 
-	@PostMapping("/add")
-	public ResponseEntity<ApplicationDto> createApplication(@RequestBody ApplicationDto applicationDto) {
-		ApplicationDto applicationDto1 = applicationService.createApplication(applicationDto);
-		return new ResponseEntity<>(applicationDto1, HttpStatus.CREATED);
-	}
+    @PostMapping("/add")
+    public ResponseEntity<ApplicationDto> createApplication(@RequestBody ApplicationDto applicationDto) {
+        ApplicationDto applicationDto1 = applicationService.createApplication(applicationDto);
+        return new ResponseEntity<>(applicationDto1, HttpStatus.CREATED);
+    }
 
-	@GetMapping("/details")
-	public ResponseEntity<List<ApplicationDto>> getAllApplication(
-			@RequestParam(name = "application_number", required = false) String applicationNumber) {
-		List<ApplicationDto> allApplication = applicationService.getAllApplication(applicationNumber);
-		return new ResponseEntity<>(allApplication, HttpStatus.OK);
-	}
+    @GetMapping("/{applicationNumber}/details")
+    public ResponseEntity<ApplicationDto> getApplicationDetails(@PathVariable String applicationNumber) {
+        ApplicationDto applicationDetails = applicationService.getApplicationDetails(applicationNumber);
+        return new ResponseEntity<>(applicationDetails, HttpStatus.OK);
+    }
 
-	@PatchMapping("/application/tenant/status")
-	public ResponseEntity<Tenant> updateTenantStatus(@RequestParam(name = "id") Integer id,
-			@RequestParam(name = "status") String status) {
-		Tenant updateTenantStatus = applicationService.updateTenantStatus(id, status);
-		return new ResponseEntity<Tenant>(updateTenantStatus, HttpStatus.OK);
-	}
+    @GetMapping("/get/all")
+    public ResponseEntity<List<ApplicationDto>> getAllApplication() {
+        List<ApplicationDto> applicationDetails = applicationService.getAllApplicationDetails();
+        return new ResponseEntity<>(applicationDetails, HttpStatus.OK);
+    }
 
-	@PatchMapping("/{applicationNumber}/status")
-	public ResponseEntity<ApplicationDto> updateApplictionStatus(@PathVariable String applicationNumber,
-			@RequestParam(name = "status") String status) {
+    @PatchMapping("/tenant/status")
+    public ResponseEntity<Tenant> updateTenantStatus(@RequestParam(name = "id") Integer id,
+                                                     @RequestParam(name = "status") String status) {
+        Tenant updateTenantStatus = applicationService.updateTenantStatus(id, status);
+        return new ResponseEntity<Tenant>(updateTenantStatus, HttpStatus.OK);
+    }
 
-		ApplicationDto applicationDto = applicationService.updateApplicationStatus(applicationNumber, status);
+    @PatchMapping("/{applicationNumber}/status")
+    public ResponseEntity<ApplicationDto> updateApplictionStatus(@PathVariable String applicationNumber,
+                                                                 @RequestParam(name = "status") String status) {
 
-		return new ResponseEntity<>(applicationDto, HttpStatus.OK);
-	}
+        ApplicationDto applicationDto = applicationService.updateApplicationStatus(applicationNumber, status);
 
-	@GetMapping("/application/tenant/details")
-	public ResponseEntity<TenantDto> getTenantDetails(@RequestParam(name = "tenantCode") String tenantCode) {
-		TenantDto tenantDetails = applicationService.getTenantDetails(tenantCode);
-		return new ResponseEntity<TenantDto>(tenantDetails, HttpStatus.OK);
-	}
+        return new ResponseEntity<>(applicationDto, HttpStatus.OK);
+    }
 
-	@PostMapping("/tenant/user")
-	public ResponseEntity<StatusResponse> mapApplicationTenantUser(@RequestBody ApplicationDto applicationDto) {
-		StatusResponse statusReponse = applicationService.mapApplicationTenantUser(applicationDto);
-		return new ResponseEntity<>(statusReponse, HttpStatus.OK);
-	}
+    @GetMapping("/tenant/details")
+    public ResponseEntity<TenantDto> getTenantDetails(@RequestParam(name = "tenantCode") String tenantCode) {
+        TenantDto tenantDetails = applicationService.getTenantDetails(tenantCode);
+        return new ResponseEntity<TenantDto>(tenantDetails, HttpStatus.OK);
+    }
+
+    @PostMapping("/tenant/user")
+    public ResponseEntity<StatusResponse> mapApplicationTenantUser(@RequestBody ApplicationDto applicationDto) {
+        StatusResponse statusReponse = applicationService.mapApplicationTenantUser(applicationDto);
+        return new ResponseEntity<>(statusReponse, HttpStatus.OK);
+    }
 }

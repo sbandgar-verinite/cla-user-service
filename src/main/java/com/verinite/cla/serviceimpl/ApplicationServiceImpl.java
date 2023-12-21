@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -75,7 +76,21 @@ public class ApplicationServiceImpl implements ApplicationService {
         tenantDto.setStatus(tenant.getStatus());
         tenantDto.setTenantCode(tenant.getTenantCode());
         tenantDto.setTenantName(tenant.getTenantName());
+        Set<User> user = tenant.getUser();
+        List<UserDto> userDtos = user.stream().map(u -> covertUsertoToUserDto(u)).collect(Collectors.toList());
+        tenantDto.setUsers(userDtos);
         return tenantDto;
+    }
+
+    private UserDto covertUsertoToUserDto(User user) {
+
+        UserDto userDto = new UserDto();
+
+        userDto.setId(user.getId());
+        userDto.setUsername(user.getUsername());
+        userDto.setEmail(user.getEmail());
+
+        return userDto;
     }
 
     @Override
@@ -125,7 +140,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (tenantList.size() != applicationDto.getTenants().size()) {
             throw new BadRequestException("Incorrect Tenant Ids passed");
         }
-		applicationData.get().getTenants().addAll(tenantList);
+        applicationData.get().getTenants().addAll(tenantList);
         applicationRepo.save(applicationData.get());
         String additionalParams = "?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true";
         for (Tenant tenant : tenantList) {
@@ -166,8 +181,10 @@ public class ApplicationServiceImpl implements ApplicationService {
     private Application convertApplicationDtoToApplication(ApplicationDto applicationDto) {
 
         Application application = new Application();
+
         application.setApplicationName(applicationDto.getApplicationName());
         application.setApplicationNumber(applicationDto.getApplicationNumber());
+        application.setStatus(applicationDto.getStatus());
 
         return application;
     }
@@ -175,39 +192,52 @@ public class ApplicationServiceImpl implements ApplicationService {
     private ApplicationDto convertApplicationToApplicationDto(Application application) {
         ApplicationDto applicationDto = new ApplicationDto();
 
+        applicationDto.setId(application.getId());
         applicationDto.setApplicationName(application.getApplicationName());
         applicationDto.setApplicationNumber(application.getApplicationNumber());
         applicationDto.setStatus(application.getStatus());
+
+        List<Tenant> tenant = application.getTenants();
+        List<TenantDto> tenantDtos = tenant.stream()
+                .map(t -> convertTenantToTenantDto(t))
+                .collect(Collectors.toList());
+
+        applicationDto.setTenants(tenantDtos);
 
         return applicationDto;
     }
 
     @Override
-    public List<ApplicationDto> getAllApplication(String applicationNumber) {
+    public ApplicationDto getApplicationDetails(String applicationNumber) {
+
+
         if (!StringUtils.isNotBlank(applicationNumber)) {
 
-            List<Application> allApplication = applicationRepo.findAll();
-
-            if (allApplication.isEmpty()) {
-                throw new BadRequestException("Application Data Not Found");
-            }
-
-            List<ApplicationDto> applicationDtos = allApplication.stream()
-                    .map(application -> convertApplicationToApplicationDto(application))
-                    .collect(Collectors.toList());
-
-            return applicationDtos;
-
-        } else {
-            List<ApplicationDto> applicationDtos = new ArrayList<>();
-            Optional<Application> byApplicationNumber = applicationRepo.findByApplicationNumber(applicationNumber);
-            if (byApplicationNumber.isEmpty()) {
-                throw new BadRequestException("Application Data Not Found For Application Number : " + applicationNumber);
-            }
-            ApplicationDto applicationDto = convertApplicationToApplicationDto(byApplicationNumber.get());
-            applicationDtos.add(applicationDto);
-            return applicationDtos;
+            throw new BadRequestException("Application Number is empty: " + applicationNumber);
         }
+
+        Optional<Application> byApplicationNumber = applicationRepo.findByApplicationNumber(applicationNumber);
+
+        if (byApplicationNumber.isEmpty()) {
+            throw new BadRequestException("Application Data Not Found for Application Number : " + applicationNumber);
+        }
+
+        ApplicationDto applicationDto = convertApplicationToApplicationDto(byApplicationNumber.get());
+
+
+        return applicationDto;
+    }
+
+    @Override
+    public List<ApplicationDto> getAllApplicationDetails() {
+
+        List<Application> allApplication = applicationRepo.findAll();
+
+        List<ApplicationDto> applicationDtos = allApplication.stream()
+                .map(app -> convertApplicationToApplicationDto(app))
+                .collect(Collectors.toList());
+
+        return applicationDtos;
     }
 
     @Override
@@ -247,12 +277,12 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public TenantDto getTenantDetails(String tenantCode) {
 
-        if (tenantCode == null){
+        if (tenantCode == null) {
             throw new BadRequestException("tenant details not found.");
         }
         Optional<Tenant> findByTenantCode = tenantRepository.findByTenantCode(tenantCode);
 
-        if(findByTenantCode.isEmpty()) {
+        if (findByTenantCode.isEmpty()) {
             throw new BadRequestException("tenant details not found.");
         }
         TenantDto convertTenantToTenantDto = convertTenantToTenantDto(findByTenantCode.get());
