@@ -3,6 +3,7 @@ package com.verinite.cla.serviceimpl;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -114,9 +115,20 @@ public class ApplicationServiceImpl implements ApplicationService {
 	}
 
 	@Override
-	public List<TenantDto> getAllTenant() {
-		List<Tenant> tenantList = tenantRepository.findAll();
+	public List<TenantDto> getAllTenant(String applicationNumber) {
+		List<Tenant> tenantList = new ArrayList<>();
+
+		if (applicationNumber != null && !applicationNumber.isEmpty()) {
+			Optional<Application> applicationData = applicationRepo.findByApplicationNumber(applicationNumber);
+
+			if (tenantList.isEmpty()) {
+				tenantList.addAll(applicationData.get().getTenants());
+			}
+		} else {
+			tenantList = tenantRepository.findAll();
+		}
 		return tenantList.stream().map(this::convertTenantToTenantDto).toList();
+
 	}
 
 	@Override

@@ -36,9 +36,14 @@ public class ApplicationController {
         return new ResponseEntity<>(createTenant, HttpStatus.CREATED);
     }
 
+//    @GetMapping("/tenant/get/all")
+//    public ResponseEntity<List<TenantDto>> getAllTenants() {
+//        return ResponseEntity.ok(applicationService.getAllTenant());
+//    }
+
     @GetMapping("/tenant/get/all")
-    public ResponseEntity<List<TenantDto>> getAllTenants() {
-        return ResponseEntity.ok(applicationService.getAllTenant());
+    public ResponseEntity<List<TenantDto>> getAllTenants(@RequestParam(name = "application_number", required = false) String applicationNumber) {
+        return ResponseEntity.ok(applicationService.getAllTenant(applicationNumber));
     }
 
     @GetMapping("/users")
