@@ -30,6 +30,6 @@ public interface ApplicationService {
 //	public Tenant getTenantDetails(Integer id);
 
 	public TenantDto getTenantDetails(String tenantCode);
-	public StatusResponse mapApplicationTenantUser(ApplicationDto applicationDto);
+	public StatusResponse onboardUser(TenantDto tenantDto);
 
 }

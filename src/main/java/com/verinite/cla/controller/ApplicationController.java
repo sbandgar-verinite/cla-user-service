@@ -94,8 +94,8 @@ public class ApplicationController {
     }
 
     @PostMapping("/tenant/user")
-    public ResponseEntity<StatusResponse> mapApplicationTenantUser(@RequestBody ApplicationDto applicationDto) {
-        StatusResponse statusReponse = applicationService.mapApplicationTenantUser(applicationDto);
+    public ResponseEntity<StatusResponse> onboardUser(@RequestBody TenantDto applicationDto) {
+        StatusResponse statusReponse = applicationService.onboardUser(applicationDto);
         return new ResponseEntity<>(statusReponse, HttpStatus.OK);
     }
 }

@@ -3,7 +3,6 @@ package com.verinite.cla.serviceimpl;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -24,12 +23,10 @@ import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.verinite.cla.controlleradvice.BadRequestException;
 import com.verinite.cla.dto.ApplicationDto;
-import com.verinite.cla.dto.RoleDto;
 import com.verinite.cla.dto.StatusResponse;
 import com.verinite.cla.dto.TenantDto;
 import com.verinite.cla.dto.UserDto;
 import com.verinite.cla.model.Application;
-import com.verinite.cla.model.Role;
 import com.verinite.cla.model.Tenant;
 import com.verinite.cla.model.User;
 import com.verinite.cla.repository.ApplicationRepository;
@@ -40,305 +37,294 @@ import com.verinite.cla.service.ApplicationService;
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationServiceImpl.class);
-
-    @Autowired
-    private ApplicationRepository applicationRepo;
-
-    @Autowired
-    private ObjectMapper modelMapper;
-
-    @Autowired
-    private TenantRepository tenantRepository;
-
-    @Value("${spring.datasource.host}")
-    private String dbHost;
-
-    @Value("${spring.datasource.username}")
-    private String dbUser;
-
-    @Value("${spring.datasource.password}")
-    private String dbPass;
-
-    @Autowired
-    private UserRepository userRepo;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    private Tenant covertTenantDtoToTenant(TenantDto tenantDto) {
-        return modelMapper.convertValue(tenantDto, Tenant.class);
-    }
-
-    private TenantDto convertTenantToTenantDto(Tenant tenant) {
-        TenantDto tenantDto = new TenantDto();
-        tenantDto.setId(tenant.getId());
-        tenantDto.setStatus(tenant.getStatus());
-        tenantDto.setTenantCode(tenant.getTenantCode());
-        tenantDto.setTenantName(tenant.getTenantName());
-        Set<User> user = tenant.getUser();
-        List<UserDto> userDtos = user.stream().map(u -> covertUsertoToUserDto(u)).collect(Collectors.toList());
-        tenantDto.setUsers(userDtos);
-        return tenantDto;
-    }
-
-    private UserDto covertUsertoToUserDto(User user) {
-
-        UserDto userDto = new UserDto();
-
-        userDto.setId(user.getId());
-        userDto.setUsername(user.getUsername());
-        userDto.setEmail(user.getEmail());
-
-        return userDto;
-    }
+	private static final Logger logger = LoggerFactory.getLogger(ApplicationServiceImpl.class);
+
+	@Autowired
+	private ApplicationRepository applicationRepo;
+
+	@Autowired
+	private ObjectMapper modelMapper;
+
+	@Autowired
+	private TenantRepository tenantRepository;
+
+	@Value("${spring.datasource.host}")
+	private String dbHost;
+
+	@Value("${spring.datasource.username}")
+	private String dbUser;
+
+	@Value("${spring.datasource.password}")
+	private String dbPass;
+
+	@Autowired
+	private UserRepository userRepo;
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
+	private Tenant covertTenantDtoToTenant(TenantDto tenantDto) {
+		return modelMapper.convertValue(tenantDto, Tenant.class);
+	}
+
+	private TenantDto convertTenantToTenantDto(Tenant tenant) {
+		TenantDto tenantDto = new TenantDto();
+		tenantDto.setId(tenant.getId());
+		tenantDto.setStatus(tenant.getStatus());
+		tenantDto.setTenantCode(tenant.getTenantCode());
+		tenantDto.setTenantName(tenant.getTenantName());
+		Set<User> user = tenant.getUser();
+		List<UserDto> userDtos = user.stream().map(u -> covertUsertoToUserDto(u)).collect(Collectors.toList());
+		tenantDto.setUsers(userDtos);
+		return tenantDto;
+	}
+
+	private UserDto covertUsertoToUserDto(User user) {
+
+		UserDto userDto = new UserDto();
+
+		userDto.setId(user.getId());
+		userDto.setUsername(user.getUsername());
+		userDto.setEmail(user.getEmail());
+
+		return userDto;
+	}
+
+	@Override
+	public TenantDto createTenant(TenantDto tenantDto) {
+
+		if (tenantDto == null) {
+			throw new BadRequestException("Invalid Tenant Data");
+		}
+
+		Optional<Tenant> byTenantCode = tenantRepository.findByTenantCode(tenantDto.getTenantCode());
+
+		if (!byTenantCode.isEmpty()) {
+			throw new BadRequestException("Application Number Already Present  |  Duplication Occur ");
+		}
+
+		Tenant tenent = covertTenantDtoToTenant(tenantDto);
+
+		Tenant saveTenant = tenantRepository.save(tenent);
+
+		TenantDto tenantDto2 = convertTenantToTenantDto(saveTenant);
+
+		return tenantDto2;
+
+	}
+
+	@Override
+	public List<TenantDto> getAllTenant() {
+		List<Tenant> tenantList = tenantRepository.findAll();
+		return tenantList.stream().map(this::convertTenantToTenantDto).toList();
+	}
+
+	@Override
+	public StatusResponse onboardTenant(ApplicationDto applicationDto) {
+		if (applicationDto == null || applicationDto.getApplicationNumber() == null) {
+			throw new BadRequestException("Invalid Json Data");
+		}
+		if (CollectionUtils.isEmpty(applicationDto.getTenants())) {
+			throw new BadRequestException("Empty Tenants for Onboarding");
+		}
+		Optional<Application> applicationData = applicationRepo
+				.findByApplicationNumber(applicationDto.getApplicationNumber());
+		if (applicationData.isEmpty()) {
+			throw new BadRequestException("Resource Not Found");
+		}
+		List<Integer> tenantIds = applicationDto.getTenants().stream().map(TenantDto::getId).toList();
+		List<Tenant> tenantList = tenantRepository.findAllById(tenantIds);
+		if (tenantList.size() != applicationDto.getTenants().size()) {
+			throw new BadRequestException("Incorrect Tenant Ids passed");
+		}
+		for (Tenant tenant : applicationData.get().getTenants()) {
+			if (tenantList.contains(tenant)) {
+				throw new BadRequestException("Tenant already Onboarded");
+			}
+		}
+		applicationData.get().getTenants().addAll(tenantList);
+		applicationRepo.save(applicationData.get());
+		String additionalParams = "?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true";
+		for (Tenant tenant : tenantList) {
+			String url = dbHost + applicationData.get().getApplicationNumber().toLowerCase() + "_"
+					+ tenant.getTenantCode().toLowerCase() + additionalParams;
+			Connection db = null;
+			try {
+				db = DriverManager.getConnection(url, dbUser, dbPass);
+			} catch (SQLException e) {
+				throw new BadRequestException("Database connection didn't established");
+			}
+			ScriptUtils.executeSqlScript(db, new ClassPathResource("cla_scripts.sql"));
+		}
+		logger.info("Tenant onboarded succesfully");
+		return new StatusResponse("Success", HttpStatus.OK.value(), "Onboarded Tenant Successfully");
+	}
 
-    @Override
-    public TenantDto createTenant(TenantDto tenantDto) {
-
-        if (tenantDto == null) {
-            throw new BadRequestException("Invalid Tenant Data");
-        }
-
-        Optional<Tenant> byTenantCode = tenantRepository.findByTenantCode(tenantDto.getTenantCode());
-
-        if (!byTenantCode.isEmpty()) {
-            throw new BadRequestException("Application Number Already Present  |  Duplication Occur ");
-        }
-
-        Tenant tenent = covertTenantDtoToTenant(tenantDto);
+	@Override
+	public ApplicationDto createApplication(ApplicationDto applicationDto) {
 
-        Tenant saveTenant = tenantRepository.save(tenent);
-
-        TenantDto tenantDto2 = convertTenantToTenantDto(saveTenant);
+		if (applicationDto == null || !StringUtils.isNotBlank(applicationDto.getApplicationNumber())) { // Chack for
+																										// null data
+			throw new BadRequestException("Invalid Application Data");
+		}
 
-        return tenantDto2;
+		Optional<Application> byApplicationNumber = applicationRepo
+				.findByApplicationNumber(applicationDto.getApplicationNumber());
 
-    }
+		if (!byApplicationNumber.isEmpty()) { // Checking Duplicate
+			throw new BadRequestException("Application Number Already Present  |  Duplication Occur ");
+		}
 
-    @Override
-    public List<TenantDto> getAllTenant() {
-        List<Tenant> tenantList = tenantRepository.findAll();
-        return tenantList.stream().map(this::convertTenantToTenantDto).toList();
-    }
+		Application application = convertApplicationDtoToApplication(applicationDto);
 
-    @Override
-    public StatusResponse onboardTenant(ApplicationDto applicationDto) {
-        if (applicationDto == null || applicationDto.getApplicationNumber() == null) {
-            throw new BadRequestException("Invalid Json Data");
-        }
-        if (CollectionUtils.isEmpty(applicationDto.getTenants())) {
-            throw new BadRequestException("Empty Tenants for Onboarding");
-        }
-        Optional<Application> applicationData = applicationRepo
-                .findByApplicationNumber(applicationDto.getApplicationNumber());
-        if (applicationData.isEmpty()) {
-            throw new BadRequestException("Resource Not Found");
-        }
-        List<Integer> tenantIds = applicationDto.getTenants().stream().map(TenantDto::getId).toList();
-        List<Tenant> tenantList = tenantRepository.findAllById(tenantIds);
-        if (tenantList.size() != applicationDto.getTenants().size()) {
-            throw new BadRequestException("Incorrect Tenant Ids passed");
-        }
-        applicationData.get().getTenants().addAll(tenantList);
-        applicationRepo.save(applicationData.get());
-        String additionalParams = "?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true";
-        for (Tenant tenant : tenantList) {
-            String url = dbHost + tenant.getTenantCode().toLowerCase() + additionalParams;
-            Connection db = null;
-            try {
-                db = DriverManager.getConnection(url, dbUser, dbPass);
-            } catch (SQLException e) {
-                throw new BadRequestException("Database connection didn't established");
-            }
-            ScriptUtils.executeSqlScript(db, new ClassPathResource("cla_scripts.sql"));
-        }
-        logger.info("Tenant onboarded succesfully");
-        return new StatusResponse("Success", HttpStatus.OK.value(), "Onboarded Tenant Successfully");
-    }
+		application = applicationRepo.save(application);
 
-    @Override
-    public ApplicationDto createApplication(ApplicationDto applicationDto) {
+		return convertApplicationToApplicationDto(application);
+	}
 
-        if (applicationDto == null || !StringUtils.isNotBlank(applicationDto.getApplicationNumber())) {    //Chack for null data
-            throw new BadRequestException("Invalid Application Data");
-        }
+	private Application convertApplicationDtoToApplication(ApplicationDto applicationDto) {
 
-        Optional<Application> byApplicationNumber = applicationRepo
-                .findByApplicationNumber(applicationDto.getApplicationNumber());
+		Application application = new Application();
 
-        if (!byApplicationNumber.isEmpty()) {                                                       //Checking Duplicate
-            throw new BadRequestException("Application Number Already Present  |  Duplication Occur ");
-        }
+		application.setApplicationName(applicationDto.getApplicationName());
+		application.setApplicationNumber(applicationDto.getApplicationNumber());
+		application.setStatus(applicationDto.getStatus());
 
-        Application application = convertApplicationDtoToApplication(applicationDto);
+		return application;
+	}
 
-        application = applicationRepo.save(application);
+	private ApplicationDto convertApplicationToApplicationDto(Application application) {
+		ApplicationDto applicationDto = new ApplicationDto();
 
-        return convertApplicationToApplicationDto(application);
-    }
+		applicationDto.setId(application.getId());
+		applicationDto.setApplicationName(application.getApplicationName());
+		applicationDto.setApplicationNumber(application.getApplicationNumber());
+		applicationDto.setStatus(application.getStatus());
 
-    private Application convertApplicationDtoToApplication(ApplicationDto applicationDto) {
+		List<Tenant> tenant = application.getTenants();
+		List<TenantDto> tenantDtos = tenant.stream().map(t -> convertTenantToTenantDto(t)).collect(Collectors.toList());
 
-        Application application = new Application();
+		applicationDto.setTenants(tenantDtos);
 
-        application.setApplicationName(applicationDto.getApplicationName());
-        application.setApplicationNumber(applicationDto.getApplicationNumber());
-        application.setStatus(applicationDto.getStatus());
+		return applicationDto;
+	}
 
-        return application;
-    }
+	@Override
+	public ApplicationDto getApplicationDetails(String applicationNumber) {
 
-    private ApplicationDto convertApplicationToApplicationDto(Application application) {
-        ApplicationDto applicationDto = new ApplicationDto();
+		if (!StringUtils.isNotBlank(applicationNumber)) {
 
-        applicationDto.setId(application.getId());
-        applicationDto.setApplicationName(application.getApplicationName());
-        applicationDto.setApplicationNumber(application.getApplicationNumber());
-        applicationDto.setStatus(application.getStatus());
+			throw new BadRequestException("Application Number is empty: " + applicationNumber);
+		}
 
-        List<Tenant> tenant = application.getTenants();
-        List<TenantDto> tenantDtos = tenant.stream()
-                .map(t -> convertTenantToTenantDto(t))
-                .collect(Collectors.toList());
+		Optional<Application> byApplicationNumber = applicationRepo.findByApplicationNumber(applicationNumber);
 
-        applicationDto.setTenants(tenantDtos);
+		if (byApplicationNumber.isEmpty()) {
+			throw new BadRequestException("Application Data Not Found for Application Number : " + applicationNumber);
+		}
 
-        return applicationDto;
-    }
+		ApplicationDto applicationDto = convertApplicationToApplicationDto(byApplicationNumber.get());
 
-    @Override
-    public ApplicationDto getApplicationDetails(String applicationNumber) {
+		return applicationDto;
+	}
 
+	@Override
+	public List<ApplicationDto> getAllApplicationDetails() {
 
-        if (!StringUtils.isNotBlank(applicationNumber)) {
+		List<Application> allApplication = applicationRepo.findAll();
 
-            throw new BadRequestException("Application Number is empty: " + applicationNumber);
-        }
+		List<ApplicationDto> applicationDtos = allApplication.stream()
+				.map(app -> convertApplicationToApplicationDto(app)).collect(Collectors.toList());
 
-        Optional<Application> byApplicationNumber = applicationRepo.findByApplicationNumber(applicationNumber);
+		return applicationDtos;
+	}
 
-        if (byApplicationNumber.isEmpty()) {
-            throw new BadRequestException("Application Data Not Found for Application Number : " + applicationNumber);
-        }
+	@Override
+	public Tenant updateTenantStatus(Integer id, String status) {
 
-        ApplicationDto applicationDto = convertApplicationToApplicationDto(byApplicationNumber.get());
+		Optional<Tenant> tenant = tenantRepository.findById(id);
 
+		tenant.get().setStatus(status);
 
-        return applicationDto;
-    }
+		Tenant save = tenantRepository.save(tenant.get());
 
-    @Override
-    public List<ApplicationDto> getAllApplicationDetails() {
+		return save;
+	}
 
-        List<Application> allApplication = applicationRepo.findAll();
+	@Override
+	public ApplicationDto updateApplicationStatus(String applicationNumber, String status) {
 
-        List<ApplicationDto> applicationDtos = allApplication.stream()
-                .map(app -> convertApplicationToApplicationDto(app))
-                .collect(Collectors.toList());
+		if (!StringUtils.isNotBlank(applicationNumber) || !StringUtils.isNotBlank(status)) {
+			throw new BadRequestException("Invalid input");
+		}
 
-        return applicationDtos;
-    }
+		Optional<Application> byApplicationNumber = applicationRepo.findByApplicationNumber(applicationNumber);
 
-    @Override
-    public Tenant updateTenantStatus(Integer id, String status) {
+		if (byApplicationNumber.isEmpty()) {
+			throw new BadRequestException("Application Data Not Found For Application Number : " + applicationNumber);
+		}
 
-        Optional<Tenant> tenant = tenantRepository.findById(id);
+		byApplicationNumber.get().setStatus(status);
 
-        tenant.get().setStatus(status);
+		applicationRepo.save(byApplicationNumber.get());
 
-        Tenant save = tenantRepository.save(tenant.get());
+		ApplicationDto applicationDto = convertApplicationToApplicationDto(byApplicationNumber.get());
 
-        return save;
-    }
+		return applicationDto;
+	}
 
-    @Override
-    public ApplicationDto updateApplicationStatus(String applicationNumber, String status) {
+	@Override
+	public TenantDto getTenantDetails(String tenantCode) {
 
-        if (!StringUtils.isNotBlank(applicationNumber) || !StringUtils.isNotBlank(status)) {
-            throw new BadRequestException("Invalid input");
-        }
+		if (tenantCode == null) {
+			throw new BadRequestException("tenant details not found.");
+		}
+		Optional<Tenant> findByTenantCode = tenantRepository.findByTenantCode(tenantCode);
 
-        Optional<Application> byApplicationNumber = applicationRepo.findByApplicationNumber(applicationNumber);
+		if (findByTenantCode.isEmpty()) {
+			throw new BadRequestException("tenant details not found.");
+		}
+		TenantDto convertTenantToTenantDto = convertTenantToTenantDto(findByTenantCode.get());
+		return convertTenantToTenantDto;
+	}
 
-        if (byApplicationNumber.isEmpty()) {
-            throw new BadRequestException("Application Data Not Found For Application Number : " + applicationNumber);
-        }
+	private TenantDto mapToTenantDto(TenantDto tenantDto) {
 
-        byApplicationNumber.get().setStatus(status);
+		TenantDto teDto = new TenantDto();
+		teDto.setStatus(tenantDto.getStatus());
+		return tenantDto;
+	}
 
-        applicationRepo.save(byApplicationNumber.get());
+	@Override
+	public StatusResponse onboardUser(TenantDto tenantDto) {
+		logger.info("Request received to onboard tenant againt user");
+		if (tenantDto == null || tenantDto.getUsers() == null || tenantDto.getUsers().isEmpty()) {
+			throw new BadRequestException("Invalid Data. Please pass valid input.");
+		}
 
-        ApplicationDto applicationDto = convertApplicationToApplicationDto(byApplicationNumber.get());
+		Optional<Tenant> existingTenant = tenantRepository.findById(tenantDto.getId());
+		if (existingTenant.isEmpty()) {
+			throw new BadRequestException("Tenant Not Found");
+		}
 
-        return applicationDto;
-    }
+		if (!CollectionUtils.isEmpty(tenantDto.getUsers())) {
+			List<User> userData = userRepo
+					.findAllByEmail(tenantDto.getUsers().stream().map(UserDto::getEmail).toList());
+			if (tenantDto.getUsers().size() != userData.size()) {
+				throw new BadRequestException("Please Provide Valid Users");
+			}
 
-    @Override
-    public TenantDto getTenantDetails(String tenantCode) {
+			for (User user : userData) {
+				if (existingTenant.get().getUser().contains(user)) {
+					throw new BadRequestException("User Already Mapped to Tenant");
+				}
+			}
+			existingTenant.get().getUser().addAll(userData);
+		}
 
-        if (tenantCode == null) {
-            throw new BadRequestException("tenant details not found.");
-        }
-        Optional<Tenant> findByTenantCode = tenantRepository.findByTenantCode(tenantCode);
-
-        if (findByTenantCode.isEmpty()) {
-            throw new BadRequestException("tenant details not found.");
-        }
-        TenantDto convertTenantToTenantDto = convertTenantToTenantDto(findByTenantCode.get());
-        return convertTenantToTenantDto;
-    }
-
-
-    private TenantDto mapToTenantDto(TenantDto tenantDto) {
-
-        TenantDto teDto = new TenantDto();
-        teDto.setStatus(tenantDto.getStatus());
-        return tenantDto;
-    }
-
-    @Override
-    public StatusResponse mapApplicationTenantUser(ApplicationDto applicationDto) {
-        logger.info("Request received to map application to user");
-        if (applicationDto == null) {
-            throw new BadRequestException("Invalid Application Data");
-        }
-
-        Optional<Application> applicationData = applicationRepo
-                .findByApplicationNumber(applicationDto.getApplicationNumber());
-
-        if (applicationData.isEmpty()) {
-            throw new BadRequestException("Application Not Found for requested application number");
-        }
-
-        if (CollectionUtils.isEmpty(applicationDto.getTenants())) {
-            throw new BadRequestException("Empty Tenant List not accepted for Mapping Users");
-        }
-
-        for (TenantDto tenant : applicationDto.getTenants()) {
-            if (tenant.getTenantCode() != null) {
-                Optional<Tenant> tenantData = tenantRepository.findByTenantCode(tenant.getTenantCode());
-                if (tenantData.isEmpty()) {
-                    throw new BadRequestException("Tenant Data Not Found");
-                }
-
-                if (!CollectionUtils.isEmpty(tenant.getUsers())) {
-                    for (UserDto user : tenant.getUsers()) {
-                        Optional<User> userData = userRepo.findByEmail(user.getEmail());
-                        if (userData.isPresent() && !tenantData.get().getUser().contains(userData.get())) {
-                            tenantData.get().getUser().add(userData.get());
-                        }
-                    }
-                }
-
-                if (!applicationData.get().getTenants().contains(tenantData.get())) {
-                    applicationData.get().getTenants().add(tenantData.get());
-                }
-            }
-        }
-        applicationRepo.save(applicationData.get());
-        logger.info("User Tenant Mapped succesfully");
-        return new StatusResponse("Success", HttpStatus.OK.value(), "User Tenant Mapped Successfully");
-    }
+		tenantRepository.save(existingTenant.get());
+		logger.info("User Tenant Mapped succesfully");
+		return new StatusResponse("Success", HttpStatus.OK.value(), "User Tenant Mapped Successfully");
+	}
 
 }
