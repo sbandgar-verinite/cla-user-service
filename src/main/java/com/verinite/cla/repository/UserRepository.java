@@ -13,6 +13,6 @@ import com.verinite.cla.model.User;
 public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByEmail(String email);
 
-    @Query("select u from User where email IN (:emails)")
+    @Query("select u from User u where email IN (:emails)")
 	List<User> findAllByEmail(List<String> emails);
 }
