@@ -10,7 +10,7 @@ import com.verinite.cla.model.Tenant;
 
 public interface ApplicationService {
 
-	public TenantDto createTenant(TenantDto tenantDto);
+	public StatusResponse createTenant(TenantDto tenantDto);
 	List<TenantDto> getAllTenant(String applicationNumber);
 
 

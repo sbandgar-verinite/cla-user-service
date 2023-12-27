@@ -30,9 +30,9 @@ public class ApplicationController {
     private UserService userService;
 
     @PostMapping("/tenant/add")
-    public ResponseEntity<TenantDto> createTenant(@RequestBody TenantDto tenantDto) {
+    public ResponseEntity<StatusResponse> createTenant(@RequestBody TenantDto tenantDto) {
         // Tenant createTenant = applicationService.createTenant(tenantDto);
-        TenantDto createTenant = applicationService.createTenant(tenantDto);
+        StatusResponse createTenant = applicationService.createTenant(tenantDto);
         return new ResponseEntity<>(createTenant, HttpStatus.CREATED);
     }
 

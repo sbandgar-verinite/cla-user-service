@@ -92,7 +92,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 	}
 
 	@Override
-	public TenantDto createTenant(TenantDto tenantDto) {
+	public StatusResponse createTenant(TenantDto tenantDto) {
 
 		if (tenantDto == null) {
 			throw new BadRequestException("Invalid Tenant Data");
@@ -110,7 +110,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 		TenantDto tenantDto2 = convertTenantToTenantDto(saveTenant);
 
-		return tenantDto2;
+//		return tenantDto2;
+		return new StatusResponse("Success", HttpStatus.OK.value(), "Tenant Created Successfully");
 
 	}
 
