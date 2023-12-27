@@ -173,7 +173,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 	}
 
 	@Override
-	public ApplicationDto createApplication(ApplicationDto applicationDto) {
+	public StatusResponse createApplication(ApplicationDto applicationDto) {
 
 		if (applicationDto == null || !StringUtils.isNotBlank(applicationDto.getApplicationNumber())) { // Chack for
 																										// null data
@@ -186,12 +186,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 		if (!byApplicationNumber.isEmpty()) { // Checking Duplicate
 			throw new BadRequestException("Application Number Already Present  |  Duplication Occur ");
 		}
-
 		Application application = convertApplicationDtoToApplication(applicationDto);
-
-		application = applicationRepo.save(application);
-
-		return convertApplicationToApplicationDto(application);
+		applicationRepo.save(application);
+		return new StatusResponse("Success", HttpStatus.OK.value(), "Application created Successfully");
 	}
 
 	private Application convertApplicationDtoToApplication(ApplicationDto applicationDto) {

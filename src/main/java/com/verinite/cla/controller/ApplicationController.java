@@ -59,8 +59,8 @@ public class ApplicationController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ApplicationDto> createApplication(@RequestBody ApplicationDto applicationDto) {
-        ApplicationDto applicationDto1 = applicationService.createApplication(applicationDto);
+    public ResponseEntity<StatusResponse> createApplication(@RequestBody ApplicationDto applicationDto) {
+        StatusResponse applicationDto1 = applicationService.createApplication(applicationDto);
         return new ResponseEntity<>(applicationDto1, HttpStatus.CREATED);
     }
 

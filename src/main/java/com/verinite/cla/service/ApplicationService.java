@@ -16,7 +16,7 @@ public interface ApplicationService {
 
 	public StatusResponse onboardTenant(ApplicationDto applicationDto);
 
-	public ApplicationDto createApplication(ApplicationDto applicationDto);
+	public StatusResponse createApplication(ApplicationDto applicationDto);
 
 	public ApplicationDto getApplicationDetails(String applicationNumber);
 
