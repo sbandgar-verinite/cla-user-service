@@ -120,8 +120,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 		if (applicationNumber != null && !applicationNumber.isEmpty()) {
 			Optional<Application> applicationData = applicationRepo.findByApplicationNumber(applicationNumber);
-
-			if (tenantList.isEmpty()) {
+			if (applicationData.isPresent()) {
 				tenantList.addAll(applicationData.get().getTenants());
 			}
 		} else {
