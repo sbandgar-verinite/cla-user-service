@@ -319,14 +319,15 @@ public class ApplicationServiceImpl implements ApplicationService {
 		}
 
 		if (!CollectionUtils.isEmpty(tenantDto.getUsers())) {
+			List<String> emailList = tenantDto.getUsers().stream().map(UserDto::getEmail).toList();
 			List<User> userData = userRepo
-					.findAllByEmail(tenantDto.getUsers().stream().map(UserDto::getEmail).toList());
-			if (tenantDto.getUsers().size() != userData.size()) {
+					.findAllByEmail(emailList);
+			if (tenantDto.getUsers().size() != userData.size() && !userData.isEmpty()) {
 				throw new BadRequestException("Please Provide Valid Users");
 			}
 
-			for (User user : userData) {
-				if (existingTenant.get().getUser().contains(user)) {
+			for (User user : existingTenant.get().getUser()) {
+				if (emailList.contains(user.getEmail())) {
 					throw new BadRequestException("User Already Mapped to Tenant");
 				}
 			}
