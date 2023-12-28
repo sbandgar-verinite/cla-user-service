@@ -76,12 +76,19 @@ public class ApplicationController {
         return new ResponseEntity<>(applicationDetails, HttpStatus.OK);
     }
 
-    @PatchMapping("/tenant/status")
-    public ResponseEntity<Tenant> updateTenantStatus(@RequestParam(name = "id") Integer id,
-                                                     @RequestParam(name = "status") String status) {
-        Tenant updateTenantStatus = applicationService.updateTenantStatus(id, status);
-        return new ResponseEntity<Tenant>(updateTenantStatus, HttpStatus.OK);
-    }
+//    @PatchMapping("/tenant/status")
+//    public ResponseEntity<Tenant> updateTenantStatus(@RequestParam(name = "id") Integer id,
+//                                                     @RequestParam(name = "status") String status) {
+//        Tenant updateTenantStatus = applicationService.updateTenantStatus(id, status);
+//        return new ResponseEntity<Tenant>(updateTenantStatus, HttpStatus.OK);
+//    }
+@PatchMapping("/tenant/status")
+public ResponseEntity<TenantDto> updateTenantStatus(@RequestParam(name = "tenant_code") String tenantCode,
+                                                    @RequestParam(name = "status") String status) {
+
+    TenantDto updateTenantStatus = applicationService.updateTenantStatus(tenantCode, status);
+    return new ResponseEntity<TenantDto>(updateTenantStatus, HttpStatus.OK);
+}
 
     @PatchMapping("/{applicationNumber}/status")
     public ResponseEntity<ApplicationDto> updateApplictionStatus(@PathVariable String applicationNumber,
@@ -93,7 +100,7 @@ public class ApplicationController {
     }
 
     @GetMapping("/tenant/details")
-    public ResponseEntity<TenantDto> getTenantDetails(@RequestParam(name = "tenantCode") String tenantCode) {
+    public ResponseEntity<TenantDto> getTenantDetails(@RequestParam(name = "tenant_code") String tenantCode) {
         TenantDto tenantDetails = applicationService.getTenantDetails(tenantCode);
         return new ResponseEntity<TenantDto>(tenantDetails, HttpStatus.OK);
     }

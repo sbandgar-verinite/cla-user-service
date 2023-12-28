@@ -22,8 +22,9 @@ public interface ApplicationService {
 
 	public List<ApplicationDto> getAllApplicationDetails();
 
-	public Tenant updateTenantStatus(Integer id, String status);
+	//public Tenant updateTenantStatus(Integer id, String status);
 
+	public TenantDto updateTenantStatus(String tenantCode, String status);
 	public ApplicationDto updateApplicationStatus(String appName, String status);
 
 //	public Tenant getTenantDetails(Integer id);

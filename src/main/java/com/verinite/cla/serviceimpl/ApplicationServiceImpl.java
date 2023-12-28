@@ -101,17 +101,15 @@ public class ApplicationServiceImpl implements ApplicationService {
 		Optional<Tenant> byTenantCode = tenantRepository.findByTenantCode(tenantDto.getTenantCode());
 
 		if (!byTenantCode.isEmpty()) {
-			throw new BadRequestException("Application Number Already Present  |  Duplication Occur ");
+			throw new BadRequestException("Tenanr Already Present  |  Duplication Occur ");
 		}
 
 		Tenant tenent = covertTenantDtoToTenant(tenantDto);
 
 		Tenant saveTenant = tenantRepository.save(tenent);
 
-		TenantDto tenantDto2 = convertTenantToTenantDto(saveTenant);
-
-//		return tenantDto2;
-		return new StatusResponse("Success", HttpStatus.OK.value(), "Tenant Created Successfully");
+		convertTenantToTenantDto(saveTenant);
+		return new StatusResponse("Success", HttpStatus.CREATED.value(), "Tenant Created Successfully");
 
 	}
 
@@ -249,16 +247,38 @@ public class ApplicationServiceImpl implements ApplicationService {
 	}
 
 	@Override
-	public Tenant updateTenantStatus(Integer id, String status) {
+	public TenantDto updateTenantStatus(String tenantCode, String status) {
 
-		Optional<Tenant> tenant = tenantRepository.findById(id);
+		if (!StringUtils.isNotBlank(status)) {
+			throw new BadRequestException("Invalid input");
+		}
 
-		tenant.get().setStatus(status);
+		Optional<Tenant> findByTenantCode = tenantRepository.findByTenantCode(tenantCode);
 
-		Tenant save = tenantRepository.save(tenant.get());
+		if (findByTenantCode.isEmpty()) {
+			throw new BadRequestException("Tenant Data Not Found For Tenant Code : " + tenantCode);
+		}
 
-		return save;
+		findByTenantCode.get().setStatus(status);
+
+		tenantRepository.save(findByTenantCode.get());
+
+		TenantDto tenantDto = convertTenantToTenantDto(findByTenantCode.get());
+
+		return tenantDto;
 	}
+
+//	@Override
+//	public Tenant updateTenantStatus(Integer id, String status) {
+//
+//		Optional<Tenant> tenant = tenantRepository.findById(id);
+//
+//		tenant.get().setStatus(status);
+//
+//		Tenant save = tenantRepository.save(tenant.get());
+//
+//		return save;
+//	}
 
 	@Override
 	public ApplicationDto updateApplicationStatus(String applicationNumber, String status) {
