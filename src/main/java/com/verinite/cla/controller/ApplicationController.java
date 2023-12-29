@@ -110,4 +110,11 @@ public ResponseEntity<TenantDto> updateTenantStatus(@RequestParam(name = "tenant
         StatusResponse statusReponse = applicationService.onboardUser(applicationDto);
         return new ResponseEntity<>(statusReponse, HttpStatus.OK);
     }
+
+    @GetMapping("/userDetails")
+    public ResponseEntity<UserDto> getUserDetails(@RequestHeader String email) {
+        UserDto userDetails = userService.getUserDetails(email);
+
+        return new ResponseEntity<UserDto>(userDetails, HttpStatus.OK);
+    }
 }

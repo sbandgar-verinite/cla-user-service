@@ -3,9 +3,12 @@ package com.verinite.cla.serviceimpl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import com.verinite.cla.controlleradvice.BadRequestException;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -81,6 +84,26 @@ public class UserServiceImpl implements UserService {
 
 		return userDto;
 
+	}
+
+	@Override
+	public UserDto getUserDetails(String email) {
+
+		if (!StringUtils.isNotBlank(email)) {
+
+			throw new BadRequestException(" email is empty: " + email);
+		}
+		Optional<User> userEmail = userRepository.findByEmail(email);
+
+		if (userEmail.isEmpty()) {
+			throw new BadRequestException("User Data Not Found for email id : " + email);
+		}
+
+//		Optional<User> findByEmail = userRepository.findByEmail(email);
+
+		UserDto toUserDto = userToUserDto(userEmail.get());
+
+		return toUserDto;
 	}
 
 	public UserDto userToUserDto(User user) {

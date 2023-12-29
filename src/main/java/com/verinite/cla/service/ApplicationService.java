@@ -13,7 +13,6 @@ public interface ApplicationService {
 	public StatusResponse createTenant(TenantDto tenantDto);
 	List<TenantDto> getAllTenant(String applicationNumber);
 
-
 	public StatusResponse onboardTenant(ApplicationDto applicationDto);
 
 	public StatusResponse createApplication(ApplicationDto applicationDto);

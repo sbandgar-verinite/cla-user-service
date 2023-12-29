@@ -11,5 +11,7 @@ public interface UserService {
 	UserDetailsService userDetailsService();
 
 	List<UserDto> getAllUser();
+
+	public UserDto getUserDetails(String email);
 	
 }
