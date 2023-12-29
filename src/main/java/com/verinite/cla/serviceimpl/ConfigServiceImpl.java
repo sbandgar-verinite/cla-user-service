@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.verinite.cla.controlleradvice.BadRequestException;
 import com.verinite.cla.dto.EndpointDto;
 import com.verinite.cla.dto.PrivilegeDto;
 import com.verinite.cla.dto.RoleDto;
@@ -27,6 +26,7 @@ import com.verinite.cla.repository.PrivilegeRepository;
 import com.verinite.cla.repository.RoleRepository;
 import com.verinite.cla.service.ConfigService;
 import com.verinite.cla.util.Constants;
+import com.verinite.commons.controlleradvice.BadRequestException;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

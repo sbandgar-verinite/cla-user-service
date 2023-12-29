@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.verinite.commons.controlleradvice.BadRequestException;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -16,7 +18,7 @@ public class TenantInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 		String tenantId = request.getHeader("tenant-id");
 		if (tenantId == null || tenantId.isEmpty()) {
-			throw new IllegalArgumentException("Tenant-Id is required in the header");
+			throw new BadRequestException("Tenant-Id is required in the header");
 		}
 		TenantContext.setCurrentTenant(tenantId);
 		return true;

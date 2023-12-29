@@ -13,8 +13,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.verinite.cla.controlleradvice.BadRequestException;
-import com.verinite.cla.controlleradvice.JwtTokenMissingException;
 import com.verinite.cla.service.JwtService;
 import com.verinite.cla.service.UserService;
 

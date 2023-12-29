@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.verinite.cla.controlleradvice.BadRequestException;
 import com.verinite.cla.dto.ApplicationDto;
 import com.verinite.cla.dto.StatusResponse;
 import com.verinite.cla.dto.TenantDto;
@@ -34,6 +33,7 @@ import com.verinite.cla.repository.ApplicationRepository;
 import com.verinite.cla.repository.TenantRepository;
 import com.verinite.cla.repository.UserRepository;
 import com.verinite.cla.service.ApplicationService;
+import com.verinite.commons.controlleradvice.BadRequestException;
 
 @Service
 public class ApplicationServiceImpl implements ApplicationService {

@@ -15,8 +15,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.CollectionUtils;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
-import com.verinite.cla.dto.TenantRowMapper;
-import com.verinite.cla.model.Tenant;
+import com.verinite.commons.TenantRowMapper;
+import com.verinite.commons.model.Tenant;
 
 @Configuration
 public class DataSourceConfig {

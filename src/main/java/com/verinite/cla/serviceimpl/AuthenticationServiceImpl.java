@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.verinite.cla.controlleradvice.UnAuthorizedException;
 import com.verinite.cla.dto.JwtAuthenticationResponse;
 import com.verinite.cla.dto.SignUpRequest;
 import com.verinite.cla.dto.SigninRequest;
@@ -21,8 +20,8 @@ import com.verinite.cla.repository.RoleRepository;
 import com.verinite.cla.repository.UserRepository;
 import com.verinite.cla.service.AuthenticationService;
 import com.verinite.cla.service.JwtService;
+import com.verinite.commons.controlleradvice.UnAuthorizedException;
 
-import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 
 @Service

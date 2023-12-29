@@ -17,21 +17,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.CollectionUtils;
 
-import com.verinite.cla.controlleradvice.BadRequestException;
-import com.verinite.cla.controlleradvice.ForbiddenException;
 import com.verinite.cla.model.Endpoint;
 import com.verinite.cla.model.Privilege;
 import com.verinite.cla.model.Role;
 import com.verinite.cla.model.User;
 import com.verinite.cla.repository.UserRepository;
 import com.verinite.cla.service.JwtService;
+import com.verinite.commons.controlleradvice.BadRequestException;
+import com.verinite.commons.controlleradvice.ForbiddenException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletResponse;
 
 @Service
 public class JwtServiceImpl implements JwtService {

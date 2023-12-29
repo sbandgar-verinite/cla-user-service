@@ -2,11 +2,11 @@ package com.verinite.cla.service;
 
 import java.util.List;
 
-import com.verinite.cla.controlleradvice.BadRequestException;
 import com.verinite.cla.dto.EndpointDto;
 import com.verinite.cla.dto.PrivilegeDto;
 import com.verinite.cla.dto.RoleDto;
 import com.verinite.cla.dto.StatusResponse;
+import com.verinite.commons.controlleradvice.BadRequestException;
 
 import jakarta.validation.Valid;
 
