@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import com.verinite.cla.controlleradvice.BadRequestException;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,6 +22,7 @@ import com.verinite.cla.model.Role;
 import com.verinite.cla.model.User;
 import com.verinite.cla.repository.UserRepository;
 import com.verinite.cla.service.UserService;
+import com.verinite.commons.controlleradvice.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
 
