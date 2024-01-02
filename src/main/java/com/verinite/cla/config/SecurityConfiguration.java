@@ -77,7 +77,7 @@ public class SecurityConfiguration implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(tenantInterceptor());
+		registry.addInterceptor(tenantInterceptor()).excludePathPatterns("/swagger-ui/**", "/v3/api-docs/**");
 	}
 
 	@Bean
