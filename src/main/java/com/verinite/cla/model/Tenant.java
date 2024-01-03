@@ -37,7 +37,7 @@ public class Tenant {
 	private String status;
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinTable(name = "user_tenant", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tenant_id"))
+	@JoinTable(name = "tenant_user", joinColumns = @JoinColumn(name = "tenant_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
 	private Set<User> user = new HashSet<>();
 
 	@JsonProperty("created_on")

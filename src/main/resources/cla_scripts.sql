@@ -93,10 +93,9 @@ CREATE TABLE `config` (
   UNIQUE KEY `UK_8c6dl7eofcfmo2y3p4gd93o3t` (`key_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `user_tenant` (
-  `user_id` bigint NOT NULL,
-  `tenant_id` bigint NOT NULL,
-  PRIMARY KEY (`user_id`,`tenant_id`),
+CREATE TABLE `tenant_user` (
+  `user_id` bigint,
+  `tenant_id` bigint,
   KEY `FK5d635q2p1gie2n1y9alk5kgbh` (`tenant_id`),
   CONSTRAINT `FK1e97sb7tts0u74wntv5f6keoy` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
   CONSTRAINT `FK5d635q2p1gie2n1y9alk5kgbh` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
