@@ -8,14 +8,14 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `role` (
-  `role_id` int NOT NULL AUTO_INCREMENT,
+  `role_id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`role_id`),
   UNIQUE KEY `UK_8sewwnpamngi6b1dwaa88askk` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `user_role` (
-  `role_id` int NOT NULL,
+  `role_id` bigint NOT NULL,
   `user_id` bigint NOT NULL,
   PRIMARY KEY (`role_id`,`user_id`),
   KEY `FK859n2jvi8ivhui0rl0esws6o` (`user_id`),
@@ -24,15 +24,15 @@ CREATE TABLE `user_role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `privilege` (
-  `privilege_id` int NOT NULL AUTO_INCREMENT,
+  `privilege_id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`privilege_id`),
   UNIQUE KEY `UK_h7iwbdg4ev8mgvmij76881tx8` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `roles_privileges` (
-  `privilege_id` int NOT NULL,
-  `role_id` int NOT NULL,
+  `privilege_id` bigint NOT NULL,
+  `role_id` bigint NOT NULL,
   PRIMARY KEY (`privilege_id`,`role_id`),
   KEY `FK9h2vewsqh8luhfq71xokh4who` (`role_id`),
   CONSTRAINT `FK5yjwxw2gvfyu76j3rgqwo685u` FOREIGN KEY (`privilege_id`) REFERENCES `privilege` (`privilege_id`),
@@ -40,7 +40,7 @@ CREATE TABLE `roles_privileges` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `endpoint` (
-  `endpoint_id` int NOT NULL AUTO_INCREMENT,
+  `endpoint_id` bigint NOT NULL AUTO_INCREMENT,
   `description` varchar(255) DEFAULT NULL,
   `endpoint_uri` varchar(255) DEFAULT NULL,
   `method` varchar(255) DEFAULT NULL,
@@ -49,8 +49,8 @@ CREATE TABLE `endpoint` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `privileges_endpoints` (
-  `endpoint_id` int NOT NULL,
-  `privilege_id` int NOT NULL,
+  `endpoint_id` bigint NOT NULL,
+  `privilege_id` bigint NOT NULL,
   PRIMARY KEY (`endpoint_id`,`privilege_id`),
   KEY `FK2klwrtart5fqwm3w4sihbmeba` (`privilege_id`),
   CONSTRAINT `FK2klwrtart5fqwm3w4sihbmeba` FOREIGN KEY (`privilege_id`) REFERENCES `privilege` (`privilege_id`),
@@ -58,15 +58,15 @@ CREATE TABLE `privileges_endpoints` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `application` (
-  `application_id` int NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `application_name` varchar(255) DEFAULT NULL,
   `application_number` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`application_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `tenant` (
-  `tenant_id` int NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `created_by` varchar(255) DEFAULT NULL,
   `created_on` datetime(6) DEFAULT NULL,
   `modified_by` varchar(255) DEFAULT NULL,
@@ -74,16 +74,15 @@ CREATE TABLE `tenant` (
   `status` varchar(255) DEFAULT NULL,
   `tenant_code` varchar(255) DEFAULT NULL,
   `tenant_name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`tenant_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `application_tenants` (
-  `application_application_id` int NOT NULL,
-  `tenants_tenant_id` int NOT NULL,
-  UNIQUE KEY `UK_60g622pd296phdjwk8ac10c7o` (`tenants_tenant_id`),
-  KEY `FKltkjer5kc0dtiyd7s0frq7l6n` (`application_application_id`),
-  CONSTRAINT `FKltkjer5kc0dtiyd7s0frq7l6n` FOREIGN KEY (`application_application_id`) REFERENCES `application` (`application_id`),
-  CONSTRAINT `FKoy6kqgax9tp4795rw8jl3iv39` FOREIGN KEY (`tenants_tenant_id`) REFERENCES `tenant` (`tenant_id`)
+CREATE TABLE `application_tenant` (
+  `application_id` bigint,
+  `tenant_id` bigint,
+  KEY `FKltkjer5kc0dtiyd7s0frq7l6n` (`application_id`),
+  CONSTRAINT `FKltkjer5kc0dtiyd7s0frq7l6n` FOREIGN KEY (`application_id`) REFERENCES `application` (`id`),
+  CONSTRAINT `FKoy6kqgax9tp4795rw8jl3iv39` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `config` (
@@ -95,12 +94,12 @@ CREATE TABLE `config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `user_tenant` (
-  `user_id` int NOT NULL,
+  `user_id` bigint NOT NULL,
   `tenant_id` bigint NOT NULL,
   PRIMARY KEY (`user_id`,`tenant_id`),
   KEY `FK5d635q2p1gie2n1y9alk5kgbh` (`tenant_id`),
-  CONSTRAINT `FK1e97sb7tts0u74wntv5f6keoy` FOREIGN KEY (`user_id`) REFERENCES `tenant` (`tenant_id`),
-  CONSTRAINT `FK5d635q2p1gie2n1y9alk5kgbh` FOREIGN KEY (`tenant_id`) REFERENCES `user` (`user_id`)
+  CONSTRAINT `FK1e97sb7tts0u74wntv5f6keoy` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
+  CONSTRAINT `FK5d635q2p1gie2n1y9alk5kgbh` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `user` (`user_id`, `email`, `name`, `password`) VALUES (1, "admin@verinite.com", "admin", "$2a$12$TiQjVYIJqZvBtd3d06lVbOq3JrdmclWhaKb8lgR//TO5XzNbKk.se");

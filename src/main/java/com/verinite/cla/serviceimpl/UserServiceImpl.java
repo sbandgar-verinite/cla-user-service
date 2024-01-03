@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,15 +13,23 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import com.verinite.cla.dto.ApplicationDto;
+import com.verinite.cla.dto.TenantDto;
 import com.verinite.cla.dto.UserDto;
+import com.verinite.cla.model.Application;
 import com.verinite.cla.model.Privilege;
 import com.verinite.cla.model.Role;
+import com.verinite.cla.model.Tenant;
 import com.verinite.cla.model.User;
+import com.verinite.cla.repository.ApplicationRepository;
+import com.verinite.cla.repository.TenantRepository;
 import com.verinite.cla.repository.UserRepository;
 import com.verinite.cla.service.UserService;
 import com.verinite.commons.controlleradvice.BadRequestException;
 
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -31,6 +37,12 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private TenantRepository tenantRepo;
+
+	@Autowired
+	private ApplicationRepository applicationRepo;
 
 	@Override
 	public UserDetailsService userDetailsService() {
@@ -89,8 +101,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDto getUserDetails(String email) {
 
-		if (!StringUtils.isNotBlank(email)) {
-
+		if (StringUtils.isBlank(email)) {
 			throw new BadRequestException(" email is empty: " + email);
 		}
 		Optional<User> userEmail = userRepository.findByEmail(email);
@@ -99,23 +110,65 @@ public class UserServiceImpl implements UserService {
 			throw new BadRequestException("User Data Not Found for email id : " + email);
 		}
 
-//		Optional<User> findByEmail = userRepository.findByEmail(email);
+//		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+//		CriteriaQuery<Object> criteriaQuery = criteriaBuilder.createQuery();
+//		Root<EMPLOYEE> from = criteriaQuery.from(EMPLOYEE.class);
+//		Path<Object> path = from.get("compare_field"); // field to map with sub-query
+//		from.fetch("name");
+//		from.fetch("id");
+//		CriteriaQuery<Object> select = criteriaQuery.select(from);
+//
+//		Subquery<PROJECT> subquery = criteriaQuery.subquery(PROJECT.class);
+//		Root fromProject = subquery.from(PROJECT.class);
+//		subquery.select(fromProject.get("requiredColumnName")); // field to map with main-query
+//		subquery.where(criteriaBuilder.and(criteriaBuilder.equal("name",name_value),criteriaBuilder.equal("id",id_value)));
+//
+//		select.where(criteriaBuilder.in(path).value(subquery));
+//
+//		TypedQuery<Object> typedQuery = entityManager.createQuery(select);
+//		List<Object> resultList = typedQuery.getResultList();
 
-		UserDto toUserDto = userToUserDto(userEmail.get());
+		List<Tenant> tenantList = tenantRepo.findByUser(userEmail.get().getEmail());
 
-		return toUserDto;
+//		List<Tenant> tenantList = userRepository.findTenantsByEmail(email);
+
+		List<Application> applicationList = applicationRepo
+				.findByTenantId(tenantList.stream().map(Tenant::getId).toList());
+
+		UserDto userDto = userToUserDto(userEmail.get());
+		if (!CollectionUtils.isEmpty(applicationList)) {
+			List<ApplicationDto> applicationDto = new ArrayList<>();
+			for (Application application : applicationList) {
+				ApplicationDto applicationDtoData = new ApplicationDto();
+				applicationDtoData.setApplicationName(application.getApplicationName());
+				applicationDtoData.setApplicationNumber(application.getApplicationNumber());
+				applicationDtoData.setId(application.getId());
+				applicationDtoData.setStatus(application.getStatus());
+				if (!CollectionUtils.isEmpty(application.getTenant())) {
+					for (Tenant tenant : application.getTenant()) {
+						if (tenantList.contains(tenant)) {
+							TenantDto tenantDto = new TenantDto();
+							tenantDto.setId(tenant.getId());
+							tenantDto.setStatus(tenant.getStatus());
+							tenantDto.setTenantCode(tenant.getTenantCode());
+							tenantDto.setTenantName(tenant.getTenantName());
+							applicationDtoData.getTenants().add(tenantDto);
+						}
+					}
+				}
+				applicationDto.add(applicationDtoData);
+			}
+			userDto.setApplications(applicationDto);
+		}
+
+		return userDto;
 	}
 
 	public UserDto userToUserDto(User user) {
-
 		UserDto userDto = new UserDto();
-
 		userDto.setUsername(user.getUsername());
-//		userDto.setPassword(user.getPassword());
 		userDto.setEmail(user.getEmail());
 		userDto.setId(user.getId());
-
 		return userDto;
-
 	}
 }

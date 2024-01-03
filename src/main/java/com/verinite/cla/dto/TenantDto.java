@@ -3,11 +3,14 @@ package com.verinite.cla.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+@JsonInclude(Include.NON_EMPTY)
 public class TenantDto {
 
-	private Integer id;
+	private Long id;
 
 	@JsonProperty("tenant_code")
 	private String tenantCode;
@@ -21,11 +24,11 @@ public class TenantDto {
 	@JsonProperty("users")
 	private List<UserDto> users = new ArrayList<>();
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

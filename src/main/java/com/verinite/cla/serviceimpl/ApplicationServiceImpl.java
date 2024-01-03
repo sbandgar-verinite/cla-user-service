@@ -120,7 +120,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		if (applicationNumber != null && !applicationNumber.isEmpty()) {
 			Optional<Application> applicationData = applicationRepo.findByApplicationNumber(applicationNumber);
 			if (applicationData.isPresent()) {
-				tenantList.addAll(applicationData.get().getTenants());
+				tenantList.addAll(applicationData.get().getTenant());
 			}
 		} else {
 			tenantList = tenantRepository.findAll();
@@ -142,17 +142,17 @@ public class ApplicationServiceImpl implements ApplicationService {
 		if (applicationData.isEmpty()) {
 			throw new BadRequestException("Resource Not Found");
 		}
-		List<Integer> tenantIds = applicationDto.getTenants().stream().map(TenantDto::getId).toList();
+		List<Long> tenantIds = applicationDto.getTenants().stream().map(TenantDto::getId).toList();
 		List<Tenant> tenantList = tenantRepository.findAllById(tenantIds);
 		if (tenantList.size() != applicationDto.getTenants().size()) {
 			throw new BadRequestException("Incorrect Tenant Ids passed");
 		}
-		for (Tenant tenant : applicationData.get().getTenants()) {
+		for (Tenant tenant : applicationData.get().getTenant()) {
 			if (tenantList.contains(tenant)) {
 				throw new BadRequestException("Tenant already Onboarded");
 			}
 		}
-		applicationData.get().getTenants().addAll(tenantList);
+		applicationData.get().getTenant().addAll(tenantList);
 		applicationRepo.save(applicationData.get());
 		String additionalParams = "?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true";
 		for (Tenant tenant : tenantList) {
@@ -208,7 +208,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		applicationDto.setApplicationNumber(application.getApplicationNumber());
 		applicationDto.setStatus(application.getStatus());
 
-		List<Tenant> tenant = application.getTenants();
+		List<Tenant> tenant = application.getTenant();
 		List<TenantDto> tenantDtos = tenant.stream().map(t -> convertTenantToTenantDto(t)).collect(Collectors.toList());
 
 		applicationDto.setTenants(tenantDtos);

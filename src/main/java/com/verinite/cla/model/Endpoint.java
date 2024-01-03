@@ -16,7 +16,7 @@ public class Endpoint {
 	@Id
 	@Column(name = "endpoint_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 
 	private String name;
 
@@ -36,11 +36,11 @@ public class Endpoint {
 		this.name = name;
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

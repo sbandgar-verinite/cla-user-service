@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_EMPTY)
 public class RoleDto {
 
-	private Integer id;
+	private Long id;
 
 	private String name;
 
@@ -23,7 +23,7 @@ public class RoleDto {
 		this.name = name;
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -35,7 +35,7 @@ public class RoleDto {
 		this.privileges = privileges;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 }

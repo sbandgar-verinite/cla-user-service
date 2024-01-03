@@ -1,6 +1,6 @@
 package com.verinite.cla.dto;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class UserDto {
 
@@ -10,9 +10,7 @@ public class UserDto {
 
 	private String email;
 
-	private String password;
-
-	private byte[] photo;
+	private List<ApplicationDto> applications;
 
 	public Long getId() {
 		return id;
@@ -38,28 +36,17 @@ public class UserDto {
 		this.email = email;
 	}
 
-	public String getPassword() {
-		return password;
+	public List<ApplicationDto> getApplications() {
+		return applications;
 	}
 
-//	public void setPassword(String password) {
-//		this.password = password;
-//	}
-
-	public byte[] getPhoto() {
-		return photo;
-	}
-
-	public void setPhoto(byte[] photo) {
-		this.photo = photo;
+	public void setApplications(List<ApplicationDto> applications) {
+		this.applications = applications;
 	}
 
 	@Override
 	public String toString() {
-		return "UserDto [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password
-				+ ", photo=" + Arrays.toString(photo) + "]";
+		return "UserDto [id=" + id + ", username=" + username + ", email=" + email + "]";
 	}
-	
-	
 
 }

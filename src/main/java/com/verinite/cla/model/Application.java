@@ -11,6 +11,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -19,10 +21,8 @@ import jakarta.persistence.Table;
 public class Application {
 
 	@Id
-	@Column(name = "application_id")
-	@JsonProperty("application_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 
 	@JsonProperty("application_number")
 	private String applicationNumber;
@@ -34,13 +34,14 @@ public class Application {
 	private String status;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Tenant> tenants = new ArrayList<>();
+//	@JoinTable(name = "application_tenants", joinColumns = @JoinColumn(name = "tenant_id"), inverseJoinColumns = @JoinColumn(name = "application_id"))
+	private List<Tenant> tenant = new ArrayList<>();
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -68,12 +69,11 @@ public class Application {
 		this.status = status;
 	}
 
-	public List<Tenant> getTenants() {
-		return tenants;
+	public List<Tenant> getTenant() {
+		return tenant;
 	}
 
-	public void setTenants(List<Tenant> tenants) {
-		this.tenants = tenants;
+	public void setTenant(List<Tenant> tenant) {
+		this.tenant = tenant;
 	}
-
 }

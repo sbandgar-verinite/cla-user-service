@@ -16,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -23,9 +24,8 @@ import jakarta.persistence.Table;
 public class Tenant {
 
 	@Id
-	@Column(name = "tenant_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 
 	@JsonProperty("tenant_code")
 	private String tenantCode;
@@ -55,17 +55,17 @@ public class Tenant {
 	public Tenant() {
 	}
 
-	public Tenant(int id, String tenantCode, String tenantName) {
+	public Tenant(Long id, String tenantCode, String tenantName) {
 		this.id = id;
 		this.tenantCode = tenantCode;
 		this.tenantName = tenantName;
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -132,4 +132,5 @@ public class Tenant {
 	public void setUser(Set<User> user) {
 		this.user = user;
 	}
+
 }
