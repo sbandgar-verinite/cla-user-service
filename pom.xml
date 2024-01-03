@@ -20,7 +20,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.verinite</groupId>
-			<artifactId>commons-library</artifactId>
+			<artifactId>commons</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>

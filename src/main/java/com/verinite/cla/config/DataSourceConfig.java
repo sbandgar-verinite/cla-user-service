@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +14,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.CollectionUtils;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
-import com.verinite.commons.TenantRowMapper;
-import com.verinite.commons.model.Tenant;
+import com.verinite.cla.dto.TenantRowMapper;
+import com.verinite.cla.model.Tenant;
 
 @Configuration
 public class DataSourceConfig {
