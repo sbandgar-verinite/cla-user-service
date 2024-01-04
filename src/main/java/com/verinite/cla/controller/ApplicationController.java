@@ -114,7 +114,6 @@ public ResponseEntity<TenantDto> updateTenantStatus(@RequestParam(name = "tenant
     @GetMapping("/userDetails")
     public ResponseEntity<UserDto> getUserDetails(@RequestHeader String email) {
         UserDto userDetails = userService.getUserDetails(email);
-
-        return new ResponseEntity<UserDto>(userDetails, HttpStatus.OK);
+        return new ResponseEntity<>(userDetails, HttpStatus.OK);
     }
 }

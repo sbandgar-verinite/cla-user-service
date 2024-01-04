@@ -156,8 +156,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		applicationRepo.save(applicationData.get());
 		String additionalParams = "?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true";
 		for (Tenant tenant : tenantList) {
-			String url = dbHost + applicationData.get().getApplicationNumber().toLowerCase() + "_"
-					+ tenant.getTenantCode().toLowerCase() + additionalParams;
+			String url = dbHost + tenant.getTenantCode() + additionalParams;
 			Connection db = null;
 			try {
 				db = DriverManager.getConnection(url, dbUser, dbPass);

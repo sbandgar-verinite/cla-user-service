@@ -8,6 +8,4 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
     protected String determineCurrentLookupKey() {
         return TenantContext.getCurrentTenant();
     }
-    
-    
 }

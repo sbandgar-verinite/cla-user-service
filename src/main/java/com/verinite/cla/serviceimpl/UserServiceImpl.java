@@ -110,28 +110,7 @@ public class UserServiceImpl implements UserService {
 			throw new BadRequestException("User Data Not Found for email id : " + email);
 		}
 
-//		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-//		CriteriaQuery<Object> criteriaQuery = criteriaBuilder.createQuery();
-//		Root<EMPLOYEE> from = criteriaQuery.from(EMPLOYEE.class);
-//		Path<Object> path = from.get("compare_field"); // field to map with sub-query
-//		from.fetch("name");
-//		from.fetch("id");
-//		CriteriaQuery<Object> select = criteriaQuery.select(from);
-//
-//		Subquery<PROJECT> subquery = criteriaQuery.subquery(PROJECT.class);
-//		Root fromProject = subquery.from(PROJECT.class);
-//		subquery.select(fromProject.get("requiredColumnName")); // field to map with main-query
-//		subquery.where(criteriaBuilder.and(criteriaBuilder.equal("name",name_value),criteriaBuilder.equal("id",id_value)));
-//
-//		select.where(criteriaBuilder.in(path).value(subquery));
-//
-//		TypedQuery<Object> typedQuery = entityManager.createQuery(select);
-//		List<Object> resultList = typedQuery.getResultList();
-
 		List<Tenant> tenantList = tenantRepo.findByUser(userEmail.get().getEmail());
-
-//		List<Tenant> tenantList = userRepository.findTenantsByEmail(email);
-
 		List<Application> applicationList = applicationRepo
 				.findByTenantId(tenantList.stream().map(Tenant::getId).toList());
 
@@ -147,16 +126,10 @@ public class UserServiceImpl implements UserService {
 				if (!CollectionUtils.isEmpty(application.getTenant())) {
 					for (Tenant tenant : application.getTenant()) {
 						if (tenantList.contains(tenant)) {
-							TenantDto tenantDto = new TenantDto();
-							tenantDto.setId(tenant.getId());
-							tenantDto.setStatus(tenant.getStatus());
-							tenantDto.setTenantCode(tenant.getTenantCode());
-							tenantDto.setTenantName(tenant.getTenantName());
-							applicationDtoData.getTenants().add(tenantDto);
+							applicationDto.add(applicationDtoData);
 						}
 					}
 				}
-				applicationDto.add(applicationDtoData);
 			}
 			userDto.setApplications(applicationDto);
 		}
