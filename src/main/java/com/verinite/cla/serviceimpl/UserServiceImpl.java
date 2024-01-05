@@ -139,7 +139,7 @@ public class UserServiceImpl implements UserService {
 
 	public UserDto userToUserDto(User user) {
 		UserDto userDto = new UserDto();
-		userDto.setUsername(user.getUsername());
+		userDto.setUsername(user.getName());
 		userDto.setEmail(user.getEmail());
 		userDto.setId(user.getId());
 		return userDto;

@@ -337,8 +337,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 		if (!CollectionUtils.isEmpty(tenantDto.getUsers())) {
 			List<String> emailList = tenantDto.getUsers().stream().map(UserDto::getEmail).toList();
-			List<User> userData = userRepo
-					.findAllByEmail(emailList);
+			List<User> userData = userRepo.findAllByEmail(emailList);
 			if (tenantDto.getUsers().size() != userData.size() && !userData.isEmpty()) {
 				throw new BadRequestException("Please Provide Valid Users");
 			}
