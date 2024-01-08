@@ -3,6 +3,7 @@ package com.verinite.cla.serviceimpl;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,6 +159,7 @@ public class ConfigServiceImpl implements ConfigService {
 		RoleDto roleDto = new RoleDto();
 		roleDto.setId(role.getId());
 		roleDto.setName(role.getName());
+		roleDto.setPrivileges(role.getPrivileges().stream().map(this::convertPrivilegeToPrivilegeDto).collect(Collectors.toSet()));
 		return roleDto;
 	}
 
@@ -195,6 +197,7 @@ public class ConfigServiceImpl implements ConfigService {
 		PrivilegeDto privilegeDto = new PrivilegeDto();
 		privilegeDto.setId(privilege.getId());
 		privilegeDto.setName(privilege.getName());
+		privilegeDto.setEndpoints(privilege.getEndpoints().stream().map(this::convertEndpointToEndpointDto).collect(Collectors.toSet()));
 		return privilegeDto;
 	}
 

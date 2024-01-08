@@ -75,7 +75,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		tenantDto.setTenantCode(tenant.getTenantCode());
 		tenantDto.setTenantName(tenant.getTenantName());
 		Set<User> user = tenant.getUser();
-		List<UserDto> userDtos = user.stream().map(u -> covertUsertoToUserDto(u)).collect(Collectors.toList());
+		List<UserDto> userDtos = user.stream().map(this::covertUsertoToUserDto).toList();
 		tenantDto.setUsers(userDtos);
 		return tenantDto;
 	}
@@ -236,13 +236,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 	@Override
 	public List<ApplicationDto> getAllApplicationDetails() {
-
 		List<Application> allApplication = applicationRepo.findAll();
-
-		List<ApplicationDto> applicationDtos = allApplication.stream()
-				.map(app -> convertApplicationToApplicationDto(app)).collect(Collectors.toList());
-
-		return applicationDtos;
+		return allApplication.stream()
+				.map(this::convertApplicationToApplicationDto).toList();
 	}
 
 	@Override

@@ -84,4 +84,5 @@ public class SecurityConfiguration implements WebMvcConfigurer {
 	public TenantInterceptor tenantInterceptor() {
 		return new TenantInterceptor();
 	}
+
 }
