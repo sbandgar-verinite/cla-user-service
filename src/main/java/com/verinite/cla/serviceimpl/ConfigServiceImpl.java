@@ -65,19 +65,30 @@ public class ConfigServiceImpl implements ConfigService {
 		}
 
 		Optional<Config> existingConfig = configRepo.findByKeyName(key);
-		if (existingConfig.isPresent()) {
-			throw new BadRequestException("Duplicate Key. Key already exists");
-		}
+//		if (existingConfig.isPresent()) {
+//			throw new BadRequestException("Duplicate Key. Key already exists");
+//		}
 
-		Config config = new Config();
-		config.setKeyName(key);
-		try {
-			config.setData(new ObjectMapper().writeValueAsString(value));
-		} catch (JsonProcessingException e) {
-			throw new BadRequestException("Invalid Value");
+		if(existingConfig.isEmpty()) {
+			Config config = new Config();
+			config.setKeyName(key);
+			try {
+				config.setData(new ObjectMapper().writeValueAsString(value));
+			} catch (JsonProcessingException e) {
+				throw new BadRequestException("Invalid Value");
+			}
+			configRepo.save(config);
+			logger.info("Configuration saved successfully for key : {}", key);
 		}
-		configRepo.save(config);
-		logger.info("Configuration saved successfully for key : {}", key);
+		else {
+			try {
+				existingConfig.get().setData(new ObjectMapper().writeValueAsString(value));
+			} catch (JsonProcessingException e) {
+				throw new BadRequestException("Invalid Value");
+			}
+			configRepo.save(existingConfig.get());
+			logger.info("Configuration saved successfully for key : {}", key);
+		}
 		return new StatusResponse(Constants.SUCCESS, HttpStatus.CREATED.value(), "Configuration Saved Successfully");
 	}
 
