@@ -1,5 +1,6 @@
 package com.verinite.cla.config;
 
+import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -35,16 +37,34 @@ public class SecurityConfiguration implements WebMvcConfigurer {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(request -> {
-			request.requestMatchers("/swagger-ui/**").permitAll();
-			request.requestMatchers("/v3/api-docs/**").permitAll();
-			request.requestMatchers("/error").permitAll();
-			request.requestMatchers("/signin").permitAll();
-			request.requestMatchers("/signup").permitAll().anyRequest().authenticated();
-		}).sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
-				.authenticationProvider(authenticationProvider())
-				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(request -> {
+                    request.requestMatchers("/swagger-ui/**").permitAll();
+                    request.requestMatchers("/v3/api-docs/**").permitAll();
+                    request.requestMatchers("/error").permitAll();
+                    request.requestMatchers("/signin").permitAll();
+                    request.requestMatchers("/signup").permitAll();
+                    try {
+                        request.anyRequest().authenticated().and().oauth2Login(withDefaults());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+                })
+                .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
+                .formLogin(login -> login.loginPage("/login")
+                		.successHandler(customAuthenticationSuccessHandler()).permitAll())
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.oauth2Login()
+        .and()
+        .logout()
+        .logoutSuccessUrl("/");
 		return http.build();
+	}
+
+	@Bean
+	public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+		return new CustomAuthenticationSuccessHandler();
 	}
 
 	@Bean
