@@ -1,11 +1,13 @@
 package com.verinite.cla.serviceimpl;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -22,6 +24,7 @@ import com.verinite.cla.service.AuthenticationService;
 import com.verinite.cla.service.JwtService;
 import com.verinite.commons.controlleradvice.UnAuthorizedException;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -70,12 +73,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public JwtAuthenticationResponse signin(SigninRequest request) {
+	public JwtAuthenticationResponse signin(SigninRequest request, HttpServletResponse response) throws IOException {
 		try {
 			authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 		} catch (RuntimeException e) {
-			throw new UnAuthorizedException("Invalid Credentials");
+			response.resetBuffer();
+			response.setHeader("Content-Type", "application/json");
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getOutputStream()
+					.print("{\"status\":\"Error\",\"code\":401,\"message\":[\"Invalid email or password!\"]}");
+			response.flushBuffer();
+			return null;
 		}
 		User user = userRepository.findByEmail(request.getEmail())
 				.orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));

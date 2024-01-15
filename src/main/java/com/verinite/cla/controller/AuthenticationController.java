@@ -1,5 +1,7 @@
 package com.verinite.cla.controller;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,6 +15,7 @@ import com.verinite.cla.dto.SigninRequest;
 import com.verinite.cla.dto.StatusResponse;
 import com.verinite.cla.service.AuthenticationService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,8 +31,8 @@ public class AuthenticationController {
 	}
 
 	@PostMapping("/signin")
-	public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SigninRequest request) {
-		return ResponseEntity.ok(authenticationService.signin(request));
+	public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SigninRequest request, HttpServletResponse response) throws IOException {
+		return ResponseEntity.ok(authenticationService.signin(request, response));
 	}
 
 }
