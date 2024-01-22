@@ -13,5 +13,7 @@ public interface UserService {
 	List<UserDto> getAllUser();
 
 	public UserDto getUserDetails(String email);
-	
+
+	User findByEmail(String email);
+
 }

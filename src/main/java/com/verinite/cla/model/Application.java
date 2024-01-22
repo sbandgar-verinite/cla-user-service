@@ -37,6 +37,15 @@ public class Application {
 //	@JoinTable(name = "application_tenants", joinColumns = @JoinColumn(name = "tenant_id"), inverseJoinColumns = @JoinColumn(name = "application_id"))
 	private List<Tenant> tenant = new ArrayList<>();
 
+	public Application() {
+	}
+
+	public Application(Long id, String applicationNumber, String applicationName) {
+		this.id = id;
+		this.applicationNumber = applicationNumber;
+		this.applicationName = applicationName;
+	}
+
 	public Long getId() {
 		return id;
 	}

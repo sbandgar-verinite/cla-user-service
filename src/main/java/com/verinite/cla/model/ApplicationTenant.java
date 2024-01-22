@@ -25,6 +25,11 @@ public class ApplicationTenant {
 	@Column(name = "tenant_id")
 	private Long tenantId;
 
+	public ApplicationTenant(Long applicationId, Long tenantId) {
+		this.applicationId = applicationId;
+		this.tenantId = tenantId;
+	}
+
 	public Long getApplicationId() {
 		return applicationId;
 	}

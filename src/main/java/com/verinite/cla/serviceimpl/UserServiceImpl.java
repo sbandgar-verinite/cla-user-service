@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import com.verinite.cla.dto.ApplicationDto;
-import com.verinite.cla.dto.TenantDto;
 import com.verinite.cla.dto.UserDto;
 import com.verinite.cla.model.Application;
 import com.verinite.cla.model.Privilege;
@@ -144,4 +143,14 @@ public class UserServiceImpl implements UserService {
 		userDto.setId(user.getId());
 		return userDto;
 	}
+
+	@Override
+	public User findByEmail(String email) {
+		Optional<User> user = userRepository.findByEmail(email);
+		if (user.isPresent()) {
+			return user.get();
+		}
+		return null;
+	}
+
 }
