@@ -73,14 +73,6 @@ CREATE TABLE `application_tenant` (
   CONSTRAINT `FKoy6kqgax9tp4795rw8jl3iv39` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `config` (
-  `config_id` bigint NOT NULL AUTO_INCREMENT,
-  `data` varchar(255) DEFAULT NULL,
-  `key_name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`config_id`),
-  UNIQUE KEY `UK_8c6dl7eofcfmo2y3p4gd93o3t` (`key_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 CREATE TABLE `tenant_user` (
   `user_id` bigint,
   `tenant_id` bigint,
@@ -99,11 +91,13 @@ INSERT INTO `privilege` (`privilege_id`, `name`) VALUES (1, "SIGNUP");
 INSERT INTO `privilege` (`privilege_id`, `name`) VALUES (2, "SIGNIN");
 INSERT INTO `privilege` (`privilege_id`, `name`) VALUES (3, "CONFIG");
 INSERT INTO `privilege` (`privilege_id`, `name`) VALUES (4, "APPLICATION");
+INSERT INTO `privilege` (`privilege_id`, `name`) VALUES (5, "SWAGGER");
 
 INSERT INTO `roles_privileges` (`privilege_id`, `role_id`) VALUES (1, 1);
 INSERT INTO `roles_privileges` (`privilege_id`, `role_id`) VALUES (2, 1);
 INSERT INTO `roles_privileges` (`privilege_id`, `role_id`) VALUES (3, 1);
 INSERT INTO `roles_privileges` (`privilege_id`, `role_id`) VALUES (4, 1);
+INSERT INTO `roles_privileges` (`privilege_id`, `role_id`) VALUES (5, 1);
 
 INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (1, "SIGNUP_POST", "/api/ums/v1/signup", "SIGNUP_POST", "POST");
 INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (2, "SIGNIN_POST", "/api/ums/v1/signin", "SIGNIN_POST", "POST");
@@ -113,6 +107,8 @@ INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `m
 INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (6, "ALL_APPLICATION_POST", "/api/ums/v1/application/**", "ALL_APPLICATION_POST", "POST");
 INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (7, "ALL_APPLICATION_GET", "/api/ums/v1/application/**", "ALL_APPLICATION_GET", "GET");
 INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (8, "ALL_APPLICATION_PATCH", "/api/ums/v1/application/**", "ALL_APPLICATION_PATCH", "PATCH");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (9, "ALL_SWAGGER", "/api/ums/v1/swagger-ui/**", "SWAGGER_GET", "GET");
+INSERT INTO `endpoint` (`endpoint_id`, `description`, `endpoint_uri`, `name`, `method`) VALUES (10, "ALL_SWAGGER_API_DOCS", "/api/ums/v1/v3/api-docs/**", "ALL_SWAGGER_API_DOCS", "GET");
 
 INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (1, 1);
 INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (2, 2);
@@ -122,6 +118,8 @@ INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (5, 3)
 INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (6, 4);
 INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (7, 4);
 INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (8, 4);
+INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (9, 5);
+INSERT INTO `privileges_endpoints` (`endpoint_id`, `privilege_id`) VALUES (10, 5);
 
 
 

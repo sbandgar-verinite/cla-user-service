@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.verinite.cla.model.ApplicationTenant;
-import com.verinite.cla.model.Tenant;
 
 public class ApplicationTenantRowMapper implements RowMapper<ApplicationTenant> {
 	@Override

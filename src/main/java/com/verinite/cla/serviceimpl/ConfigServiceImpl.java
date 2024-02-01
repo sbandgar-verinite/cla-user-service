@@ -17,17 +17,17 @@ import com.verinite.cla.dto.EndpointDto;
 import com.verinite.cla.dto.PrivilegeDto;
 import com.verinite.cla.dto.RoleDto;
 import com.verinite.cla.dto.StatusResponse;
-import com.verinite.cla.model.Config;
 import com.verinite.cla.model.Endpoint;
 import com.verinite.cla.model.Privilege;
 import com.verinite.cla.model.Role;
-import com.verinite.cla.repository.ConfigRepository;
 import com.verinite.cla.repository.EndpointRepository;
 import com.verinite.cla.repository.PrivilegeRepository;
 import com.verinite.cla.repository.RoleRepository;
 import com.verinite.cla.service.ConfigService;
 import com.verinite.cla.util.Constants;
 import com.verinite.commons.controlleradvice.BadRequestException;
+import com.verinite.commons.model.Config;
+import com.verinite.commons.repo.ConfigurationRepository;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class ConfigServiceImpl implements ConfigService {
 	private final Logger logger = LoggerFactory.getLogger(ConfigServiceImpl.class);
 
 	@Autowired
-	private ConfigRepository configRepo;
+	private ConfigurationRepository configRepo;
 
 	@Autowired
 	private RoleRepository roleRepo;

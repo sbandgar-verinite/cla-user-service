@@ -24,23 +24,23 @@ import lombok.RequiredArgsConstructor;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-@RequestMapping("/config")
+@RequestMapping("/config/v1")
 @RequiredArgsConstructor
-public class ConfigurationController {
+public class ConfigController {
 
 	@Autowired
 	private ConfigService configService;
 
-	@PostMapping("/{key}")
-	public ResponseEntity<StatusResponse> addConfiguration(@PathVariable String key, @RequestBody Object value)
-			throws BadRequestException {
-		return ResponseEntity.ok(configService.addConfiguration(key, value));
-	}
-
-	@GetMapping("/{key}")
-	public ResponseEntity<Object> getConfiguration(@PathVariable String key) throws BadRequestException {
-		return ResponseEntity.ok(configService.getConfiguration(key));
-	}
+//	@PostMapping("/{key}")
+//	public ResponseEntity<StatusResponse> addConfiguration(@PathVariable String key, @RequestBody Object value)
+//			throws BadRequestException {
+//		return ResponseEntity.ok(configService.addConfiguration(key, value));
+//	}
+//
+//	@GetMapping("/{key}")
+//	public ResponseEntity<Object> getConfiguration(@PathVariable String key) throws BadRequestException {
+//		return ResponseEntity.ok(configService.getConfiguration(key));
+//	}
 
 	@PatchMapping("/role/privilege")
 	public ResponseEntity<StatusResponse> mapRolesToPrivilege(@RequestBody List<RoleDto> role) {

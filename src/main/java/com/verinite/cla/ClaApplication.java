@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
 @Import(com.verinite.commons.config.SwaggerConfig.class)
+@ComponentScan("com.verinite.commons")
 public class ClaApplication {
 
 	public static void main(String[] args) {
