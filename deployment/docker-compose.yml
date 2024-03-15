@@ -15,8 +15,10 @@ services:
       MYSQLDATA: /tmp/db/data
     volumes:
       - db-data:/tmp/db/data
-      - ./init.sh:/docker-entrypoint-initdb.d/init.sh
+      #- ./init.sh:/docker-entrypoint-initdb.d/init.sh
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - D:/Repos/Verinite/cla-user-service/deployment/init.sh:/docker-entrypoint-initdb.d/init.sh
+      - D:/Repos/Verinite/cla-user-service/deployment/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "3306:3306"
     restart: unless-stopped

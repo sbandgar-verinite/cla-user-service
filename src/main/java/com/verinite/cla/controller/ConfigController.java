@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-@RequestMapping("/config/v1")
+@RequestMapping("/config")
 @RequiredArgsConstructor
 public class ConfigController {
 
